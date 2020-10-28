@@ -110,17 +110,26 @@ get_utm <- function(long) {
 #' TODO smarter way to choose field that is used to create the grid.
 
 get_field_grid <- function(field, alpha, harvest_width, passes_to_clip, cellsize_scaler){
-  # create field boundary and buffer.
+  # find the outside pass
   hull <- get_field_boundary(field = field, alpha = alpha)
-  buffer <- st_buffer(hull, -harvest_width * passes_to_clip)
+
+  # add half the harvester width to the outside pass to create field boundary
+  boundary <- st_buffer(hull, harvest_width*0.5)
+
+  # create buffer inside field boundary
+  buffer <- st_buffer(boundary, -harvest_width * passes_to_clip)
 
   # make a grid for the whole field.
-  poly_grid <- st_make_grid(hull, cellsize = harvest_width * cellsize_scaler, square = FALSE)
+  poly_grid <- st_make_grid(boundary, cellsize = harvest_width * cellsize_scaler, square = FALSE)
 
-  # subset to polygons inside the buffer
-  clipped_grid <- st_intersection(poly_grid, buffer)
+  # returns logicial of whether each polygon is inside the buffer.
+  # only keeps whole polygons (not partial)
+  clipped_grid <- st_within(poly_grid, buffer, sparse = FALSE)
 
-  return(clipped_grid)
+  # subset to whole polygons inside the buffer
+  poly_grid <- poly_grid[clipped_grid, ]
+
+  return(poly_grid)
 }
 
 #' Update field CRS to UTM zone
@@ -148,10 +157,11 @@ update_field_crs <- function(field){
 #' @param path string; directory where the files are stored
 #' @param files string; names of files to be opened within the directory given by
 #' \code{path}.
-#' @param file_ids string; **optional** alternative names to assign to new columns.
-#' If NULL (default), the names from \code{files} will be used. In same cases, these
-#' names may be very long or otherwise a poor choice, and this variable is used
-#' to assign more useful names in the final data frame.
+#' @param file_ids string; names to assign to new columns. Must be in the same
+#' order as \code{files}.
+#' @param grid_field_name string; the \code{file_id} of the field that should
+#' be used to create the field grid. This should be a file that is representative
+#' because it will be used to make the boundary and grid applied to all other fields.
 #' @param var_of_interest string; column name in each file that should be retained
 #' in the final combined data frame.
 #' @param harvest_width numeric; width of harvest header, in meters.
@@ -171,17 +181,18 @@ update_field_crs <- function(field){
 #' by \code{alpha}, minus \code{harvest_width * passes_to_clip}. The value of each
 #' polygon represents the median of the underlying point observations that fell
 #' within each polygon in the grid.
+#'
+#' @note
+#' TODO can you pass multiple variable names to var_of_interest?
+#' TODO a checking function that makes sure all inputs are correct before loading
+#' the files.
 
-make_cluster_data <- function(path, files, file_ids = NULL, var_of_interest,
+make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_interest,
                               harvest_width,  alpha, passes_to_clip, cellsize_scaler){
-
-  if(is.null(file_ids)){
-    file_ids <- files
-  }
 
   # read in each field, remove any duplicated rows, update to UTM
   fields <- lapply(files, function(file){
-    temp_field <- st_read(paste0(path, file, '.shp'))
+    temp_field <- st_read(paste0(path, file))
     temp_field <- temp_field %>% distinct(.keep_all = TRUE)
 
     temp_field <- update_field_crs(temp_field)
@@ -190,7 +201,7 @@ make_cluster_data <- function(path, files, file_ids = NULL, var_of_interest,
 
   # make grid of a single field
   # TODO consider making grid of largest field or some other rule
-  field_grid <- get_field_grid(field = fields[[1]], alpha = alpha, harvest_width = harvest_width,
+  field_grid <- get_field_grid(field = fields[[grid_field_name]], alpha = alpha, harvest_width = harvest_width,
                                passes_to_clip = passes_to_clip, cellsize_scaler = cellsize_scaler)
 
   # add field id's to var of interest list

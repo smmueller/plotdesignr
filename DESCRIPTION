@@ -13,7 +13,9 @@ Imports:
     alphahull,
     igraph,
     maps,
-    sp
+    sp,
+    ClustGeo,
+    data.table
 Depends:
   dplyr,
   sf
