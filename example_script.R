@@ -7,7 +7,7 @@ File_ids <- c('2010', '2012', '2014')
 Grid_field_name <- '2010'
 Var_of_interest <- rep('Yld_Vol_Dr', length(Files))
 
-combine_width <- 25/3.281 # ft to meters
+combine_width <- 15/3.281 # ft to meters
 Alpha <- 50
 Passes_to_clip <- 3 # controls buffer size
 Cellsize_scaler <- 2 # controls grid cell size
@@ -26,15 +26,35 @@ cluster_scaled <- scale(st_drop_geometry(cluster_df))
 
 # including factoextra & ggplot2 in the imports does not actually load ggplot2, and then this fails.
 library(factoextra)
-fviz_nbclust(cluster_scaled, hcut, method = "wss", nboot = 50)
-fviz_nbclust(cluster_scaled, hcut, method = "silhouette", nboot = 50)
+fviz_nbclust(cluster_scaled, hcut, method = "wss", nboot = 25)
+fviz_nbclust(cluster_scaled, hcut, method = "silhouette", nboot = 25)
 
 Cluster_number <- 2
 
 explore_best_mix(processed_data = cluster_df, cluster_number = 4)
 
-cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2, mixing_parameter = 0.2)
+cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 4, mixing_parameter = 0.2)
+plot(cluster_ln[, 'cluster'], border = NA, axes = T)
 
+# 3. Simulate experiment
+# 3.1 Choose location of simulated experiment
+loc <- graphics::locator(n = 1, type = 'n')
+xyCoords <- cbind(x = loc$x, y = loc$y)
+text(xyCoords, labels=1, cex = 1.5)
 
+# pts <- lapply(1:nrow(xyCoords), function(row){st_point(xyCoords[row,])})
+# geom <- st_sfc(pts)
+# geom <- st_set_crs(geom, st_crs(cluster_ln))
+# plot(geom, add = T, col = 'red', pch = 19, cex = 5)
 
+# 3.2 Create block polygon
+plot_l <- 60/3.281
+plot_w <- 30/3.281
+border_w <- 15/3.281
+treatment_n <- 4
+
+block_poly <- draw_block(centroid = xyCoords[1,], treatment_number = treatment_n, plot_length = plot_l, plot_width = plot_w, border_width = border_w)
+block_mask <- st_multipolygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
+block_center <- st_centroid(block_mask)
+plot(block_mask, col = 'red', pch = 19, cex = 2, add = T)
 

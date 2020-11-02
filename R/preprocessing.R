@@ -107,7 +107,6 @@ get_utm <- function(long) {
 #'
 #' @note
 #' TODO maybe add ... to give more flexibility in passing arguments?
-#' TODO smarter way to choose field that is used to create the grid.
 
 get_field_grid <- function(field, alpha, harvest_width, passes_to_clip, cellsize_scaler){
   # find the outside pass
@@ -200,7 +199,6 @@ make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_int
   names(fields) <- file_ids
 
   # make grid of a single field
-  # TODO consider making grid of largest field or some other rule
   field_grid <- get_field_grid(field = fields[[grid_field_name]], alpha = alpha, harvest_width = harvest_width,
                                passes_to_clip = passes_to_clip, cellsize_scaler = cellsize_scaler)
 

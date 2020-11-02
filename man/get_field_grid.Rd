@@ -32,5 +32,4 @@ Make polygon grid of field
 }
 \note{
 TODO maybe add ... to give more flexibility in passing arguments?
-TODO smarter way to choose field that is used to create the grid.
 }

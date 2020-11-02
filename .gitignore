@@ -3,6 +3,13 @@
 .RData
 .Ruserdata
 
+# results and testing files
 *.png
 *.csv
 *.rds
+
+# shape files
+*.dbf
+*.prj
+*.shp
+*.shx
