@@ -25,12 +25,12 @@ draw_block <- function(treatment_number, plot_length, plot_width, border_width, 
 
   plot_list <- lapply(1:treatment_number, function(i){
     if(i == 1){
-      temp <- list(draw_plot(plot_length, plot_width, x0 = origin[['x0']], y0 = origin[['y0']]))
+      temp <- draw_plot(plot_length, plot_width, x0 = origin[['x0']], y0 = origin[['y0']])
       return(temp)
     }
     new_plot_width <- plot_width*(i - 1)
     new_border_width <- border_width*(i - 1)
-    temp <- list(draw_plot(plot_length, plot_width, x0 = origin[['x0']] + new_plot_width + new_border_width, y0 = origin[['y0']]))
+    temp <- draw_plot(plot_length, plot_width, x0 = origin[['x0']] + new_plot_width + new_border_width, y0 = origin[['y0']])
     return(temp)
   })
 

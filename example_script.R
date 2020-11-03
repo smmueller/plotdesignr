@@ -19,7 +19,7 @@ cluster_df <- make_cluster_data(path = Path, files = Files, file_ids = File_ids,
                                 harvest_width = combine_width, alpha = Alpha,
                                 passes_to_clip = Passes_to_clip,
                                 cellsize_scaler = Cellsize_scaler)
-plot(cluster_df)
+plot(cluster_df, border =  NA)
 
 # 2. Choose number of Clusters
 cluster_scaled <- scale(st_drop_geometry(cluster_df))
@@ -36,25 +36,41 @@ explore_best_mix(processed_data = cluster_df, cluster_number = 4)
 cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 4, mixing_parameter = 0.2)
 plot(cluster_ln[, 'cluster'], border = NA, axes = T)
 
-# 3. Simulate experiment
+# 3. Set up simulation experiment
 # 3.1 Choose location of simulated experiment
-loc <- graphics::locator(n = 1, type = 'n')
-xyCoords <- cbind(x = loc$x, y = loc$y)
-text(xyCoords, labels=1, cex = 1.5)
+# TODO option for continous experiment (traditional)
+clust_sp <- as(cluster_ln %>% dplyr::select(-Yld_Vol_Dr_2010, -Yld_Vol_Dr_2012, -Yld_Vol_Dr_2014), 'Spatial')
+sp::plot(clust_sp, col = clust_sp@data$cluster, border =  NA)
 
-# pts <- lapply(1:nrow(xyCoords), function(row){st_point(xyCoords[row,])})
-# geom <- st_sfc(pts)
-# geom <- st_set_crs(geom, st_crs(cluster_ln))
-# plot(geom, add = T, col = 'red', pch = 19, cex = 5)
+block_n <- 4
+
+loc <- graphics::locator(n = block_n, type = 'n')
+xyCoords <- cbind(x = loc$x, y = loc$y)
+text(xyCoords, labels = 1:block_n, cex = 1.5)
 
 # 3.2 Create block polygon
-plot_l <- 60/3.281
-plot_w <- 30/3.281
+plot_l <- 200/3.281
+plot_w <- 45/3.281
 border_w <- 15/3.281
 treatment_n <- 4
 
-block_poly <- draw_block(centroid = xyCoords[1,], treatment_number = treatment_n, plot_length = plot_l, plot_width = plot_w, border_width = border_w)
-block_mask <- st_multipolygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
-block_center <- st_centroid(block_mask)
-plot(block_mask, col = 'red', pch = 19, cex = 2, add = T)
+block_mask_list <- lapply(1:nrow(xyCoords), function(n){
+  origin <- xyCoords[n, ]
+  block_poly <- draw_block(centroid = xyCoords[n,], treatment_number = treatment_n,
+                          plot_length = plot_l, plot_width = plot_w, border_width = border_w)
+  block_mask <- st_polygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
+  block_mask_sf <- st_sf(block = n, geom = block_mask)
+})
 
+block_mask <- do.call(rbind, block_mask_list)
+plot(block_mask, col = 'gray', pch = 19, cex = 2, add = T)
+
+# 3.3 Get yields from new blocks
+# read in a raw file to get point data
+temp_field <- st_read(paste0(Path, '2014.shp'))
+temp_field <- temp_field %>% distinct(.keep_all = TRUE)
+
+temp_field <- update_field_crs(temp_field)
+# plot(temp_field[, 'Yld_Vol_Dr'], pch = 19, cex = 0.1)
+masked_temp_field <- st_intersection(block_mask, temp_field)
+plot(masked_temp_field[, c('block', 'Yld_Vol_Dr')], pch =  19, cex = 0.5)
