@@ -1,7 +1,7 @@
 # functions for creating new experiments
 
 #' @return A matrix of the 5 points making up a single plot polygon
-draw_plot <- function(plot_length, plot_width, x0, y0){
+get_plot_boundary <- function(plot_length, plot_width, x0, y0){
 
   x1 <- x0 + plot_width
   y1 <- y0 + plot_length
@@ -18,22 +18,25 @@ find_origin <- function(centroid, treatment_number, plot_length, plot_width, bor
 }
 
 #' @return list of lists. First element of the lists is the plot, sublist is the plot polygon points
-draw_block <- function(treatment_number, plot_length, plot_width, border_width, centroid){
+draw_block <- function(treatment_number, plot_length, plot_width, border_width, centroid,
+                       crs){
 
   # find x and y starting points based on the desired centroids
   origin <- find_origin(centroid, treatment_number, plot_length, plot_width, border_width)
 
   plot_list <- lapply(1:treatment_number, function(i){
     if(i == 1){
-      temp <- draw_plot(plot_length, plot_width, x0 = origin[['x0']], y0 = origin[['y0']])
-      return(temp)
+      temp <- get_plot_boundary(plot_length, plot_width, x0 = origin[['x0']], y0 = origin[['y0']])
+    }else{
+      new_plot_width <- plot_width*(i - 1)
+      new_border_width <- border_width*(i - 1)
+      temp <- get_plot_boundary(plot_length, plot_width, x0 = origin[['x0']] + new_plot_width + new_border_width, y0 = origin[['y0']])
     }
-    new_plot_width <- plot_width*(i - 1)
-    new_border_width <- border_width*(i - 1)
-    temp <- draw_plot(plot_length, plot_width, x0 = origin[['x0']] + new_plot_width + new_border_width, y0 = origin[['y0']])
-    return(temp)
+    one_plot_geom <- st_polygon(list(temp)) %>% st_sfc(crs = crs)
+    one_plot <- st_sf(plot = i, geom = one_plot_geom)
+    return(one_plot)
   })
 
-  names(plot_list) <- 1:treatment_number # might not have a purpose
-  return(plot_list)
+  one_block <- do.call(rbind, plot_list)
+  return(one_block)
 }

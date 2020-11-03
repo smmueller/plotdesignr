@@ -55,15 +55,16 @@ border_w <- 15/3.281
 treatment_n <- 4
 
 block_mask_list <- lapply(1:nrow(xyCoords), function(n){
-  origin <- xyCoords[n, ]
+
   block_poly <- draw_block(centroid = xyCoords[n,], treatment_number = treatment_n,
-                          plot_length = plot_l, plot_width = plot_w, border_width = border_w)
-  block_mask <- st_polygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
-  block_mask_sf <- st_sf(block = n, geom = block_mask)
+                          plot_length = plot_l, plot_width = plot_w, border_width = border_w, crs = st_crs(cluster_ln))
+  block_poly <- cbind(block = n, block_poly)
+  # block_mask <- st_polygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
+  # block_mask_sf <- st_sf(block = n, geom = block_mask)
 })
 
 block_mask <- do.call(rbind, block_mask_list)
-plot(block_mask, col = 'gray', pch = 19, cex = 2, add = T)
+plot(block_mask[, 'block'], add = T)
 
 # 3.3 Get yields from new blocks
 # read in a raw file to get point data
@@ -74,3 +75,16 @@ temp_field <- update_field_crs(temp_field)
 # plot(temp_field[, 'Yld_Vol_Dr'], pch = 19, cex = 0.1)
 masked_temp_field <- st_intersection(block_mask, temp_field)
 plot(masked_temp_field[, c('block', 'Yld_Vol_Dr')], pch =  19, cex = 0.5)
+
+sim_df <- data.table::copy(masked_temp_field)
+st_geometry(sim_df) <- NULL
+sim_df <- sim_df %>% dplyr::select(block, plot, Yld_Vol_Dr)
+sim_df_means <- sim_df %>% group_by(block, plot) %>% summarize(yield = mean(Yld_Vol_Dr))
+sim_df_means <- sim_df_means %>% group_by(block) %>% mutate(treat = sample(1:4, n()))
+
+# make sure there are no differences before adding treatment
+# add lmerTest to DESCRIPTION
+fit_lmer <- lmerTest::lmer(yield ~ treat + (1| block), data = sim_df_means)
+summary(fit_lmer)
+
+
