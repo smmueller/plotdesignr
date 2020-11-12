@@ -1,5 +1,10 @@
 devtools::load_all()
 
+# what to do with these global options?
+default_margin <- par()$mar
+par(mar=rep(0,4))
+palette(RColorBrewer::brewer.pal(12, 'Set3'))
+
 # define arguments
 Path <- '/Users/Sarah/Google Drive/Martha - Yield Data/Field LN/'
 Files <- paste0(c('2010', '2012', '2014'), '.shp')
@@ -12,7 +17,9 @@ Alpha <- 50
 Passes_to_clip <- 3 # controls buffer size
 Cellsize_scaler <- 2 # controls grid cell size
 
-# 1. Create a single data frame to cluster
+################################################################################
+# 1. Create a single data frame to cluster -------------------------------------
+################################################################################
 cluster_df <- make_cluster_data(path = Path, files = Files, file_ids = File_ids,
                                 grid_field_name = Grid_field_name,
                                 var_of_interest = Var_of_interest,
@@ -21,7 +28,9 @@ cluster_df <- make_cluster_data(path = Path, files = Files, file_ids = File_ids,
                                 cellsize_scaler = Cellsize_scaler)
 plot(cluster_df, border =  NA)
 
-# 2. Choose number of Clusters
+################################################################################
+# 2. Choose number of Clusters -------------------------------------------------
+################################################################################
 cluster_scaled <- scale(st_drop_geometry(cluster_df))
 
 # including factoextra & ggplot2 in the imports does not actually load ggplot2, and then this fails.
@@ -33,67 +42,32 @@ Cluster_number <- 2
 
 explore_best_mix(processed_data = cluster_df, cluster_number = 2)
 
-cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2, mixing_parameter = 0.1)
+cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 4, mixing_parameter = 0.2)
 plot(cluster_ln[, 'cluster'], border = NA, axes = T)
 
-# 3. Set up simulation experiment
-# 3.1 Choose location of simulated experiment
-clust_sp <- as(cluster_ln %>% dplyr::select(-Yld_Vol_Dr_2010, -Yld_Vol_Dr_2012, -Yld_Vol_Dr_2014), 'Spatial')
-sp::plot(clust_sp, col = clust_sp@data$cluster, border =  NA)
-
-block_n <- 4
-
-loc <- graphics::locator(n = block_n, type = 'n')
-xyCoords <- cbind(x = loc$x, y = loc$y)
-text(xyCoords, labels = 1:block_n, cex = 1.5, col = 'white')
-
-# 3.2 Create polygons for simulation experiments
-# 3.2.1 Create new blocks
+################################################################################
+# 3. Set up simulation experiment ----------------------------------------------
+################################################################################
 plot_l <- 300/3.281
 plot_w <- 45/3.281
 border_w <- 15/3.281
 treatment_n <- 4
+block_n <- 4
 
-block_mask_list <- lapply(1:nrow(xyCoords), function(n){
+# 3.1 Create disconnected experiment
+beta <- make_disconnect_exp(experiment_type = 'disconnected',
+                            clustered_sf = cluster_ln, n_locations = block_n,
+                            treatment_number = treatment_n, plot_length = plot_l,
+                            plot_width = plot_w, border_width = border_w,
+                            crs = st_crs(cluster_ln), rotation_angle = -95)
 
-  block_poly <- draw_block(centroid = xyCoords[n, ], treatment_number = treatment_n,
-                           plot_length = plot_l, plot_width = plot_w, border_width = border_w, crs = st_crs(cluster_ln))
-  block_poly <- cbind(block = n, block_poly)
-  # block_mask <- st_polygon(block_poly) %>% st_sfc(crs = st_crs(cluster_ln))
-  # block_mask_sf <- st_sf(block = n, geom = block_mask)
-})
-
-block_mask <- do.call(rbind, block_mask_list)
-plot(block_mask[, 'block'], add = T)
-
-# 3.2.2 Create traditional experiment
-experiment_loc <- graphics::locator(n = 1, type = 'n')
-experiment_xyCoords <- cbind(x = experiment_loc$x, y = experiment_loc$y)
-text(experiment_xyCoords, labels = 'Exp', cex = 1.5, col = 'white')
-
-block_origins <- find_experiment_origins(centroid = experiment_xyCoords, rows = 2,
-                                    cols = 2, treatment_number = treatment_n,
-                                    plot_length = plot_l, plot_width = plot_w,
-                                    border_width = border_w)
-
-exp_block_mask_list <- lapply(1:nrow(block_origins), function(n){
-
-  block_poly <- draw_block(origin = block_origins[n,], treatment_number = treatment_n,
-                           plot_length = plot_l, plot_width = plot_w, border_width = border_w, crs = st_crs(cluster_ln))
-  block_poly <- cbind(block = n, block_poly)
-})
-
-exp_block_mask <- do.call(rbind, exp_block_mask_list)
-plot(exp_block_mask[, 'block'], add = T)
-
-exp_final <- rotate_experiment(exp_block_mask, rotation_angle = -95)
-beta_final_list <- lapply(1:block_n, function(bn){
-  rotate_experiment(block_mask %>% filter(block == bn), rotation_angle = -95)
-})
-beta_final <- do.call(rbind, beta_final_list)
-
-plot(exp_final[, 'block'], add = T)
-plot(beta_final[, 'block'], add = T)
+# 3.2 Create traditional (connected) experiment
+traditional <- make_disconnect_exp(experiment_type = 'connected',
+                            clustered_sf = cluster_ln, n_locations = 1,
+                            treatment_number = treatment_n, plot_length = plot_l,
+                            plot_width = plot_w, border_width = border_w,
+                            crs = st_crs(cluster_ln), rotation_angle = -95,
+                            block_rows = 2, block_cols = 2)
 
 # combine the 2 experiments into 1 df
 simulation_polys <- rbind(exp_final %>% mutate(id = 'traditional'), beta_final %>% mutate(id = 'beta'))

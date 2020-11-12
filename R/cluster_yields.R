@@ -1,6 +1,3 @@
-# Hierachrical clustering with geographical constraints
-# https://arxiv.org/pdf/1707.03897.pdf
-
 #' Exploratory analysis for choosing mixing parameter
 #' @title explore_best_mix
 #'

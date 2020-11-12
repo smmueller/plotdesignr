@@ -15,7 +15,8 @@ Imports:
     maps,
     sp,
     ClustGeo,
-    data.table
+    data.table,
+    RColorBrewer
 Depends:
   dplyr,
   sf
