@@ -19,7 +19,9 @@ Imports:
     RColorBrewer
 Depends:
   dplyr,
-  sf
+  sf,
+  ggplot2,
+  factoextra
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

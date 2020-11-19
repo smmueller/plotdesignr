@@ -217,6 +217,7 @@ rotate_experiment <- function(original_experiment, rotation_angle){
 #' represent the coordinates of the locations clicked on the map.
 
 choose_location <- function(clustered_sf, n_locations){
+  palette(RColorBrewer::brewer.pal(8, 'Pastel1'))
   # convert to sp in order for graphics::locator to find the lat long
   clust_sp <- as(clustered_sf %>% dplyr::select(geometry, cluster), 'Spatial')
 
@@ -226,7 +227,7 @@ choose_location <- function(clustered_sf, n_locations){
   cat('Please choose', n_locations, 'point(s) by clicking on the map.')
   loc <- graphics::locator(n = n_locations, type = 'n')
   xy_coords <- cbind(x = loc$x, y = loc$y)
-
+  palette('default')
   return(xy_coords)
 }
 
@@ -263,8 +264,8 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
   return(experiment)
 }
 
-#' Make a disconnected experiment
-#' @title make_disconnect_exp
+#' Make an experiment
+#' @title make_experiment
 #'
 #' @param clustered_sf sf; An sf object with a column \code{cluster} designating
 #' which cluster each polygon has been assigned to. Most like returned from
@@ -281,12 +282,12 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
 #'
 #' @return An sf object containing the polygons for each plot in an experiment.
 
-make_disconnect_exp <- function(experiment_type,
-                                clustered_sf, n_locations,
-                                treatment_number, plot_length, plot_width,
-                                border_width, crs, block_cols = NULL,
-                                block_rows = NULL,
-                                rotation_angle = NULL){
+make_experiment <- function(experiment_type,
+                            clustered_sf, n_locations,
+                            treatment_number, plot_length, plot_width,
+                            border_width, crs, block_cols = NULL,
+                            block_rows = NULL,
+                            rotation_angle = NULL){
 
   if(!(experiment_type %in% c('connected', 'disconnected'))){
     stop('experiment_type must be either "connected" or "disconnected"')
