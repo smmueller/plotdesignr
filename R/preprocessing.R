@@ -150,6 +150,34 @@ update_field_crs <- function(field){
   return(temp_utm_field)
 }
 
+#' Read one or more files
+#' @title get_all_files
+#'
+#' @param path string; directory where the files are stored
+#' @param files string; names of files to be opened within the directory given by
+#' \code{path}.
+#' @param file_ids string; names to assign to new columns. Must be in the same
+#' order as \code{files}.
+#' @param to_utm logical; should crs be converted to UTM? Default it true.
+#'
+#' @return A named list of sf objects
+
+get_all_files <- function(path, files, file_ids, to_utm = TRUE){
+  # read in each field, remove any duplicated rows, update to UTM
+  fields <- lapply(files, function(file){
+    temp_field <- st_read(paste0(path, file))
+    temp_field <- temp_field %>% distinct(.keep_all = TRUE)
+
+    if(to_utm){
+      temp_field <- update_field_crs(temp_field)
+    }
+    return(temp_field)
+  })
+  names(fields) <- file_ids
+
+  return(fields)
+}
+
 #' Create a single data frame of field attributes from multiple files to use in clustering
 #' @title make_cluster_data
 #'
@@ -190,13 +218,7 @@ make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_int
                               harvest_width,  alpha, passes_to_clip, cellsize_scaler){
 
   # read in each field, remove any duplicated rows, update to UTM
-  fields <- lapply(files, function(file){
-    temp_field <- st_read(paste0(path, file))
-    temp_field <- temp_field %>% distinct(.keep_all = TRUE)
-
-    temp_field <- update_field_crs(temp_field)
-  })
-  names(fields) <- file_ids
+  fields <- get_all_files(path, files, file_ids)
 
   # make grid of a single field
   field_grid <- get_field_grid(field = fields[[grid_field_name]], alpha = alpha, harvest_width = harvest_width,
