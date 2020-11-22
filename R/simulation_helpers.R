@@ -15,19 +15,27 @@
 
 get_test_data <- function(path, files, file_ids, var_of_interest){
 
-  fields <- get_all_files(path, files, file_ids)
-
   # expand var_of_interest if not the same length as files
-  if(length(var_of_interest) > 1 & length(var_of_interest) != length(var_of_interest)){
+  if(length(var_of_interest) > 1 & length(var_of_interest) != length(files)){
     stop('var_of_interest must be either length 1 or length(files)')
   }
   if(length(var_of_interest) != length(files)){
-    warning('Assuming the same var_of_interest for all files')
     var_of_interest <- rep(var_of_interest, length(files))
+    warning('Assuming the same var_of_interest for all files')
   }
 
+  # read in data
+  fields <- get_all_files(path, files, file_ids)
+
+  # subset data to only variable of interest.
+  # update name to all be the same as the first var_of_interest
   fields_sub <- lapply(1:length(fields), function(f){
-    fields[[f]] %>% select(var_of_interest[f])
+    temp_field <- fields[[f]] %>% select(var_of_interest[f])
+    if(var_of_interest[f] != var_of_interest[1]){
+      temp_field <- temp_field %>% rename(!!var_of_interest[1] := var_of_interest[f])
+      warning(var_of_interest[f], ' has been renamed to ', var_of_interest[1], ' to allow for binding.')
+    }
+    return(temp_field)
   })
   names(fields_sub) <- file_ids
 

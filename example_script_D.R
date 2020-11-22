@@ -48,10 +48,10 @@ explore_dendrogram(processed_data = cluster_df, cluster_number = 4)
 explore_cluster_number(processed_data = cluster_df, kmax = 6)
 
 # view how mixing results to choose mixing parameter (alpha in ClustGeo::hclustgeo)
-explore_best_mix(processed_data = cluster_df, cluster_number = 3, range = seq(0, 0.3, 0.1))
+explore_best_mix(processed_data = cluster_df, cluster_number = 4, range = seq(0, 0.3, 0.1))
 
 # finalize cluster number and mixing parameter choice
-cluster_d <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, mixing_parameter = 0.1)
+cluster_d <- finalize_clusters(processed_data = cluster_df, cluster_number = 4, mixing_parameter = 0.3)
 # plot(cluster_d[, 'cluster'], border = NA, axes = T)
 
 ################################################################################
@@ -93,12 +93,6 @@ traditional_02 <- make_experiment(experiment_type = 'connected',
 # Read in simulation data
 sim_data_list <- get_test_data(path = Path, files = Files, file_ids = File_ids,
                                var_of_interest = Var_of_interest)
-
-# TODO: in a funciton somewhere all elements need the same names
-sim_data_list <- lapply(sim_data_list, function(sim){
-  names(sim) <- c('Yld_Vol_Dr', 'geometry')
-  return(sim)
-})
 
 # Find intersection with experiment polygons
 Experiment_List <- list(trad_wide = traditional_01, trad_long = traditional_02, beta = beta_01)
