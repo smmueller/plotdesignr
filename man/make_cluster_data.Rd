@@ -4,45 +4,22 @@
 \alias{make_cluster_data}
 \title{make_cluster_data}
 \usage{
-make_cluster_data(
-  path,
-  files,
-  file_ids,
-  grid_field_name,
-  var_of_interest,
-  harvest_width,
-  alpha,
-  passes_to_clip,
-  cellsize_scaler
-)
+make_cluster_data(config)
 }
 \arguments{
-\item{path}{string; directory where the files are stored}
-
-\item{files}{string; names of files to be opened within the directory given by
-\code{path}.}
-
-\item{file_ids}{string; names to assign to new columns. Must be in the same
-order as \code{files}.}
-
-\item{grid_field_name}{string; the \code{file_id} of the field that should
-be used to create the field grid. This should be a file that is representative
-because it will be used to make the boundary and grid applied to all other fields.}
-
-\item{var_of_interest}{string; column name in each file that should be retained
-in the final combined data frame.}
-
-\item{harvest_width}{numeric; width of harvest header, in meters.}
-
-\item{alpha}{numeric; parameter that controls the level of simplication in the
-field boundary. Larger numbers are more simple and follow the data points less closely.
-This parameter is passed to \code{alphahull::ashape}.}
-
-\item{passes_to_clip}{integer; the number of harvest passes to clip when creating
-field buffer.}
-
-\item{cellsize_scaler}{numeric; controls the size of the grid cells. The value
-of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.}
+\item{config}{list; a named list containing all the needed inputs. The following
+must be included:
+\itemize{
+ \item{\code{path} string; directory where the files are stored}
+ \item{files string; names of files to be opened within the directory given by \code{path}.}
+ \item{file_ids string; names to assign to new columns. Must be in the same order as \code{files}.}
+ \item{grid_field_name string; the \code{file_id} of the field that should be used to create the field grid. This should be a file that is representative because it will be used to make the boundary and grid applied to all other fields.}
+ \item{var_of_interest string; column name in each file that should be retained in the final combined data frame.}
+ \item{harvest_width numeric; width of harvest header, in meters.}
+ \item{alpha numeric; parameter that controls the level of simplication in the field boundary. Larger numbers are more simple and follow the data points less closely. This parameter is passed to \code{alphahull::ashape}.}
+ \item{passes_to_clip integer; the number of harvest passes to clip when creating field buffer.}
+ \item{cellsize_scaler numeric; controls the size of the grid cells. The value of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.}
+}}
 }
 \value{
 An sf data frame containing the requested columns from each file,

@@ -65,7 +65,8 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
 #' cluster and the second panel being a dedrogram with colored rectangles showing
 #' the clusters. The colors in the two plots should match.
 
-explore_dendrogram <- function(processed_data, cluster_number){
+explore_dendrogram <- function(processed_data, cluster_number, plot = TRUE,
+                               output_path = NULL){
   # make a copy of the processed data
   plot_data <- data.table::copy(processed_data)
 
@@ -77,17 +78,36 @@ explore_dendrogram <- function(processed_data, cluster_number){
 
   plot_data$clusters <- sub_grp
 
+  # returns dendro_plot
+  dendro_plot %<a-% make_dendrogram_plot(plot_data, tree, cluster_number)
+
+  if(plot){
+    dendro_plot
+  }
+
+  # save image to output path if one has been given
+  if(!is.null(output_path)){
+    save_fig(path = output_path,
+             name = paste('dendrogram', cluster_number, 'clusters', sep = '_'),
+             plot_call = dendro_plot)
+  }
+}
+
+# create active binding to plot code
+make_dendrogram_plot <- function(plot_data, tree, cluster_number){
   # to prevent warning in RColorBrewer call
   n_color <- ifelse(cluster_number <= 2, 3, cluster_number)
 
-  par(mfrow = c(1, 2))
-  # plot map
+  split.screen(c(1, 2))
+  screen(1)
+    # map
   plot(plot_data[, 'clusters'], border = NA, pal = RColorBrewer::brewer.pal(n_color, 'Set1'),
-       key.pos = NULL, reset = FALSE)
-  # plot dendrogram
-  plot(tree, hang = -1, labels = F, main = NULL)
+         key.pos = NULL, reset = FALSE, main = 'hierarchical clusters')
+  screen(2)
+    # dendrogram
+  plot(tree, hang = -1, labels = FALSE, main = NULL, xlab = NA, sub = NA)
   rect.hclust(tree, k = cluster_number, border = RColorBrewer::brewer.pal(n_color, 'Set1'))
-  par(mfrow = c(1, 1))
+  close.screen(all = TRUE)
 }
 
 #' Tests for appropriate cluster number

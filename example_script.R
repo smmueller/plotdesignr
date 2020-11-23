@@ -3,36 +3,32 @@ devtools::load_all()
 # what to do with these global options?
 # default_margin <- par()$mar
 # par(mar=rep(0,4))
-# palette(RColorBrewer::brewer.pal(8, 'Set1'))
+
+inputs_config <- read_yaml('research/config_working.yml')
 
 # define arguments
-Path <- '/Users/Sarah/Google Drive/Martha - Yield Data/Field LN/'
-Files <- paste0(c('2010', '2012', '2014'), '.shp')
-File_ids <- c('2010', '2012', '2014')
-Grid_field_name <- '2010'
-Var_of_interest <- rep('Yld_Vol_Dr', length(Files))
-
-combine_width <- 15/3.281 # ft to meters
-Alpha <- 50
-Passes_to_clip <- 3 # controls buffer size
-Cellsize_scaler <- 2 # controls grid cell size
+# Path <- '/Users/Sarah/Google Drive/Martha - Yield Data/Field LN/'
+# Files <- paste0(c('2010', '2012', '2014'), '.shp')
+# File_ids <- c('2010', '2012', '2014')
+# Grid_field_name <- '2010'
+# Var_of_interest <- rep('Yld_Vol_Dr', length(Files))
+#
+# combine_width <- 15/3.281 # ft to meters
+# Alpha <- 50
+# Passes_to_clip <- 3 # controls buffer size
+# Cellsize_scaler <- 2 # controls grid cell size
 
 ################################################################################
 # 1. Create a single data frame to cluster -------------------------------------
 ################################################################################
-cluster_df <- make_cluster_data(path = Path, files = Files, file_ids = File_ids,
-                                grid_field_name = Grid_field_name,
-                                var_of_interest = Var_of_interest,
-                                harvest_width = combine_width, alpha = Alpha,
-                                passes_to_clip = Passes_to_clip,
-                                cellsize_scaler = Cellsize_scaler)
-plot(cluster_df, border =  NA)
+cluster_df <- make_cluster_data(config = inputs_config, plot = FALSE)
 
 ################################################################################
 # 2. Choose number of Clusters -------------------------------------------------
 ################################################################################
 # view dendrogram to see where clusters might naturally break
-explore_dendrogram(processed_data = cluster_df, cluster_number = 3)
+explore_dendrogram(processed_data = cluster_df, cluster_number = 3,
+                   output_path = inputs_config$output_path)
 
 # look at some tests to suggest cluster number
 explore_cluster_number(processed_data = cluster_df, kmax = 6)
@@ -47,32 +43,28 @@ cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2,
 ################################################################################
 # 3. Set up simulation experiment ----------------------------------------------
 ################################################################################
-plot_l <- 300/3.281
-plot_w <- 45/3.281
-border_w <- 15/3.281
-treatment_n <- 4
-block_n <- 4
+# plot_l <- 300/3.281
+# plot_w <- 45/3.281
+# border_w <- 15/3.281
+# treatment_n <- 4
+# block_n <- 4
 
 # 3.1 Create disconnected experiment
 beta_01 <- make_experiment(experiment_type = 'disconnected',
-                        clustered_sf = cluster_ln, n_locations = block_n,
-                        treatment_number = treatment_n, plot_length = plot_l,
-                        plot_width = plot_w, border_width = border_w,
-                        crs = st_crs(cluster_ln), rotation_angle = -95)
+                           clustered_sf = cluster_ln, crs = st_crs(cluster_ln),
+                           config = inputs_config, rotation_angle = -95)
 
 beta_02 <- make_experiment(experiment_type = 'disconnected',
-                           clustered_sf = cluster_ln, n_locations = block_n,
-                           treatment_number = treatment_n, plot_length = plot_l,
-                           plot_width = plot_w, border_width = border_w,
-                           crs = st_crs(cluster_ln), rotation_angle = -95)
+                           clustered_sf = cluster_ln, crs = st_crs(cluster_ln),
+                           config = inputs_config, rotation_angle = -95)
 
 
 # 3.2 Create traditional (connected) experiment
 traditional <- make_experiment(experiment_type = 'connected',
-                               clustered_sf = cluster_ln, n_locations = 1,
-                               treatment_number = treatment_n, plot_length = plot_l,
-                               plot_width = plot_w, border_width = border_w,
-                               crs = st_crs(cluster_ln), rotation_angle = -95,
+                               clustered_sf = cluster_ln,
+                               crs = st_crs(cluster_ln),
+                               config = inputs_config,
+                               rotation_angle = -95,
                                block_rows = 2, block_cols = 2)
 
 ################################################################################

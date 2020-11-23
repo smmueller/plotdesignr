@@ -181,24 +181,24 @@ get_all_files <- function(path, files, file_ids, to_utm = TRUE){
 #' Create a single data frame of field attributes from multiple files to use in clustering
 #' @title make_cluster_data
 #'
-#' @param path string; directory where the files are stored
-#' @param files string; names of files to be opened within the directory given by
-#' \code{path}.
-#' @param file_ids string; names to assign to new columns. Must be in the same
-#' order as \code{files}.
-#' @param grid_field_name string; the \code{file_id} of the field that should
-#' be used to create the field grid. This should be a file that is representative
-#' because it will be used to make the boundary and grid applied to all other fields.
-#' @param var_of_interest string; column name in each file that should be retained
-#' in the final combined data frame.
-#' @param harvest_width numeric; width of harvest header, in meters.
-#' @param alpha numeric; parameter that controls the level of simplication in the
-#' field boundary. Larger numbers are more simple and follow the data points less closely.
-#' This parameter is passed to \code{alphahull::ashape}.
-#' @param passes_to_clip integer; the number of harvest passes to clip when creating
-#' field buffer.
-#' @param cellsize_scaler numeric; controls the size of the grid cells. The value
-#' of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.
+#' @param config list; a named list containing all the needed inputs. The following
+#' must be included:
+#' \itemize{
+#'  \item{\code{path} string; directory where the files are stored}
+#'  \item{\code{files} string; names of files to be opened within the directory given by \code{path}.}
+#'  \item{\code{file_ids} string; names to assign to new columns. Must be in the same order as \code{files}.}
+#'  \item{\code{grid_field_name} string; the \code{file_id} of the field that should be used to create the field grid. This should be a file that is representative because it will be used to make the boundary and grid applied to all other fields.}
+#'  \item{\code{var_of_interest} string; column name in each file that should be retained in the final combined data frame.}
+#'  \item{\code{harvest_width} numeric; width of harvest header, in meters.}
+#'  \item{\code{alpha} numeric; parameter that controls the level of simplication in the field boundary. Larger numbers are more simple and follow the data points less closely. This parameter is passed to \code{alphahull::ashape}.}
+#'  \item{\code{passes_to_clip} integer; the number of harvest passes to clip when creating field buffer.}
+#'  \item{\code{cellsize_scaler} numeric; controls the size of the grid cells. The value of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.}
+#'  \item{\code{output_path} string; optional, if provided, plots will be saved to the directory given by this path. This can be helpful because some output plots are large and slow to load in the graphics device.}
+#' }
+#' @param plot logical; **optional** should a faceted plot of \code{config$var_of_interest}
+#' be plotted? Default is TRUE. Note: this only controls whether a plot should be
+#' created in the current R Studio graphics device. plot = FALSE will NOT surpress
+#' saving plots if an output path has been given in the config list.
 #'
 #' @return An sf data frame containing the requested columns from each file,
 #' named as \code{paste(var_of_interest, file_ids, sep = _)}, aggregated to a common
@@ -208,25 +208,30 @@ get_all_files <- function(path, files, file_ids, to_utm = TRUE){
 #' by \code{alpha}, minus \code{harvest_width * passes_to_clip}. The value of each
 #' polygon represents the median of the underlying point observations that fell
 #' within each polygon in the grid.
+#' @export
 #'
 #' @note
 #' TODO can you pass multiple variable names to var_of_interest?
 #' TODO a checking function that makes sure all inputs are correct before loading
 #' the files.
 
-make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_interest,
-                              harvest_width,  alpha, passes_to_clip, cellsize_scaler){
+make_cluster_data <- function(config, plot = TRUE){
+  # make sure all needed arguments are present in the config
+  input_checker(config, 'make_cluster_data')
 
   # read in each field, remove any duplicated rows, update to UTM
-  fields <- get_all_files(path, files, file_ids)
+  fields <- get_all_files(config$path, config$files, config$file_ids)
 
   # make grid of a single field
-  field_grid <- get_field_grid(field = fields[[grid_field_name]], alpha = alpha, harvest_width = harvest_width,
-                               passes_to_clip = passes_to_clip, cellsize_scaler = cellsize_scaler)
+  field_grid <- get_field_grid(field = fields[[config$grid_field_name]],
+                               alpha = config$alpha,
+                               harvest_width = config$harvest_width,
+                               passes_to_clip = config$passes_to_clip,
+                               cellsize_scaler = config$cellsize_scaler)
 
   # add field id's to var of interest list
-  var_list <- as.list(var_of_interest)
-  names(var_list) <- file_ids
+  var_list <- as.list(config$var_of_interest)
+  names(var_list) <- config$file_ids
 
   # aggregate points within the clipped polygons
   # TODO if a filled as >90% NA polygons, delete?
@@ -238,7 +243,7 @@ make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_int
     agg_yield_poly <- aggregate(field[, select_col], field_grid, median, na.rm = TRUE)
 
     # update name with file id
-    new_name <- paste(select_col, file_ids[f], sep = '_')
+    new_name <- paste(select_col, config$file_ids[f], sep = '_')
     agg_yield_poly <- agg_yield_poly %>% rename(!!new_name := all_of(select_col))
 
     return(agg_yield_poly)
@@ -252,6 +257,16 @@ make_cluster_data <- function(path, files, file_ids, grid_field_name, var_of_int
 
   # remove any NA rows
   all_data <- multi_year %>% filter_at(vars(-geometry), all_vars(!is.na(.)))
+
+  # save image to output path if one has been given
+  if(!is.null(config$output_path)){
+    save_fig(path = config$output_path, name = 'cluster_data',
+             plot_call = plot(all_data, border =  NA))
+  }
+  # output image to graphics device if plot == TRUE
+  if(plot){
+    plot(all_data, border =  NA)
+  }
 
   return(all_data)
 }

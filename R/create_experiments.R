@@ -267,49 +267,66 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
 #' Make an experiment
 #' @title make_experiment
 #'
+#' @param experiment_type string; which experiment type should be created? Current
+#' options are "connected", which creates as single traditional experiment and
+#' expects the user to select only one centroid, or "disconnected" which expects
+#' the user to select the centroid of each block independently.
 #' @param clustered_sf sf; An sf object with a column \code{cluster} designating
 #' which cluster each polygon has been assigned to. Most like returned from
 #' \code{finalize_clusters}.
-#' @param n_locations integer; number of needed points.
-#' @param treatment_number integer; the number of treatments or plots that should
-#' be included in each block.
-#' @param plot_length numeric; desired plot length in meters.
-#' @param plot_width numeric; desired plot width in meters.
-#' @param border_width numeric; desired width between plots in meters.
-#' @param crs crs; coordinate referense system to be applied to new polygons.
-#' @param rotaion_anlge integer; **optional** angle by which the original experiment should
+#' @param crs crs; coordinate reference system to be applied to new polygons.
+#' @param config list; a named list containing all the needed inputs. The following
+#' must be included:
+#' \itemize{
+#'  \item{\code{plot_length} numeric; desired plot length in meters.}
+#'  \item{\code{plot_width} numeric; desired plot width in meters.}
+#'  \item{\code{border_width} numeric; desired width between plots in meters.}
+#'  \item{\code{treatment_number} integer; the number of treatments or plots that should be included in each block.}
+#'  \item{\code{block_number} integer; the number of blocks that should be included in each experiment.}
+#' }
+#' @param rotation_angle integer; **optional** angle by which the original experiment should
 #' be rotated. Default is NULL, which will result in plots oriented North-South.
+#' @param block_cols integer; **optional** for "connected" experiment, how many
+#' columns should the blocks be arranged into? \code{block_cols}*\code{block_rows}
+#' should be equal to \code{config$block_number}.
+#' @param block_rows integer; **optional** for "connected" experiment, how many
+#' rows should the blocks be arranged into? \code{block_cols}*\code{block_rows}
+#' should be equal to \code{config$block_number}.
 #'
 #' @return An sf object containing the polygons for each plot in an experiment.
 
-make_experiment <- function(experiment_type,
-                            clustered_sf, n_locations,
-                            treatment_number, plot_length, plot_width,
-                            border_width, crs, block_cols = NULL,
-                            block_rows = NULL,
-                            rotation_angle = NULL){
+make_experiment <- function(experiment_type, clustered_sf, n_locations,
+                            crs, config, rotation_angle = NULL,
+                            block_cols = NULL, block_rows = NULL){
 
   if(!(experiment_type %in% c('connected', 'disconnected'))){
     stop('experiment_type must be either "connected" or "disconnected"')
   }
-
-  if(experiment_type == 'connected' & n_locations != 1){
-    warning('n_locations must be 1 for connected experiment. Changing n_locations to 1')
-    n_locations <- 1
+  if(experiment_type == 'connected' && block_cols*block_rows != config$block_number){
+    stop('block_cols * block_rows must equal config$block_number')
   }
+
+  # check config inputs
+  input_checker(config, 'make_experiment')
+
+  # how many centroids need to be selected?
+  n_locations <- ifelse(experiment_type == 'disconnected', config$block_number, 1)
 
   locations <- choose_location(clustered_sf = clustered_sf, n_locations = n_locations)
 
-  params_list <- list(treatment_number = treatment_number,
-                      plot_length = plot_length,
-                      plot_width = plot_width,
-                      border_width = border_width, crs = crs)
+  params_list <- list(treatment_number = config$treatment_number,
+                      plot_length = config$plot_length,
+                      plot_width = config$plot_width,
+                      border_width = config$border_width,
+                      crs = crs)
 
   if(experiment_type == 'disconnected'){
     block_origins <- t(apply(locations, 1, function(row){
-      get_block_origin(centroid = row, treatment_number = treatment_number,
-                       plot_length = plot_length, plot_width = plot_width,
-                       border_width = border_width)
+      get_block_origin(centroid = row,
+                       treatment_number = config$treatment_number,
+                       plot_length = config$plot_length,
+                       plot_width =config$plot_width,
+                       border_width = config$border_width)
     }))
     params_list[['xy_coords']] <- block_origins
   }
@@ -318,10 +335,10 @@ make_experiment <- function(experiment_type,
     block_origins <- get_experiment_origins(centroid = locations,
                                             block_rows = block_rows,
                                             block_cols = block_cols,
-                                            treatment_number = treatment_number,
-                                            plot_length = plot_length,
-                                            plot_width = plot_width,
-                                            border_width = border_width)
+                                            treatment_number = config$treatment_number,
+                                            plot_length = config$plot_length,
+                                            plot_width = config$plot_width,
+                                            border_width = config$border_width)
     params_list[['xy_coords']] <- block_origins
   }
 
