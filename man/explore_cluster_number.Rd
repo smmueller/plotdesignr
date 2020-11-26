@@ -4,7 +4,12 @@
 \alias{explore_cluster_number}
 \title{explore_cluster_number}
 \usage{
-explore_cluster_number(processed_data, kmax = 10)
+explore_cluster_number(
+  processed_data,
+  kmax = 10,
+  plot = TRUE,
+  output_path = NULL
+)
 }
 \arguments{
 \item{processed_data}{sf; An sf object likely returned from \code{make_cluster_data}.
@@ -13,6 +18,13 @@ geometries.}
 
 \item{kmax}{integer; **optional** maximum cluster number to be passed to
 factoextra::fviz_nbclust and NbClust::NbClust.}
+
+\item{plot}{logical; **optional** should plot be returned in the current graphics
+device (likely in RStudio). Default is TRUE.}
+
+\item{output_path}{string; **optional** path where plot should be saved.
+Default is NULL. If path is provided, a PDF with the name
+"suggested_optimal_cluster_number".}
 }
 \value{
 A three panel plot showing the relationship between cluster number and
@@ -21,4 +33,7 @@ These results can be used as a guide for choosing cluster number.
 }
 \description{
 Tests for appropriate cluster number
+}
+\note{
+If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 }

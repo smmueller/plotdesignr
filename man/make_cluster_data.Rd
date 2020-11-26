@@ -4,22 +4,28 @@
 \alias{make_cluster_data}
 \title{make_cluster_data}
 \usage{
-make_cluster_data(config)
+make_cluster_data(config, plot = TRUE)
 }
 \arguments{
 \item{config}{list; a named list containing all the needed inputs. The following
 must be included:
 \itemize{
  \item{\code{path} string; directory where the files are stored}
- \item{files string; names of files to be opened within the directory given by \code{path}.}
- \item{file_ids string; names to assign to new columns. Must be in the same order as \code{files}.}
- \item{grid_field_name string; the \code{file_id} of the field that should be used to create the field grid. This should be a file that is representative because it will be used to make the boundary and grid applied to all other fields.}
- \item{var_of_interest string; column name in each file that should be retained in the final combined data frame.}
- \item{harvest_width numeric; width of harvest header, in meters.}
- \item{alpha numeric; parameter that controls the level of simplication in the field boundary. Larger numbers are more simple and follow the data points less closely. This parameter is passed to \code{alphahull::ashape}.}
- \item{passes_to_clip integer; the number of harvest passes to clip when creating field buffer.}
- \item{cellsize_scaler numeric; controls the size of the grid cells. The value of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.}
+ \item{\code{files} string; names of files to be opened within the directory given by \code{path}.}
+ \item{\code{file_ids} string; names to assign to new columns. Must be in the same order as \code{files}.}
+ \item{\code{grid_field_name} string; the \code{file_id} of the field that should be used to create the field grid. This should be a file that is representative because it will be used to make the boundary and grid applied to all other fields.}
+ \item{\code{var_of_interest} string; column name in each file that should be retained in the final combined data frame.}
+ \item{\code{harvest_width} numeric; width of harvest header, in meters.}
+ \item{\code{alpha} numeric; parameter that controls the level of simplication in the field boundary. Larger numbers are more simple and follow the data points less closely. This parameter is passed to \code{alphahull::ashape}.}
+ \item{\code{passes_to_clip} integer; the number of harvest passes to clip when creating field buffer.}
+ \item{\code{cellsize_scaler} numeric; controls the size of the grid cells. The value of \code{combind_width * cellsize_scaler} is passed to \code{sf::st_make_grid}.}
+ \item{\code{output_path} string; optional, if provided, plots will be saved to the directory given by this path. This can be helpful because some output plots are large and slow to load in the graphics device.}
 }}
+
+\item{plot}{logical; **optional** should a faceted plot of \code{config$var_of_interest}
+be plotted? Default is TRUE. Note: this only controls whether a plot should be
+created in the current R Studio graphics device. plot = FALSE will NOT surpress
+saving plots if an output path has been given in the config list.}
 }
 \value{
 An sf data frame containing the requested columns from each file,

@@ -8,36 +8,45 @@ make_experiment(
   experiment_type,
   clustered_sf,
   n_locations,
-  treatment_number,
-  plot_length,
-  plot_width,
-  border_width,
   crs,
+  config,
+  rotation_angle = NULL,
   block_cols = NULL,
-  block_rows = NULL,
-  rotation_angle = NULL
+  block_rows = NULL
 )
 }
 \arguments{
+\item{experiment_type}{string; which experiment type should be created? Current
+options are "connected", which creates as single traditional experiment and
+expects the user to select only one centroid, or "disconnected" which expects
+the user to select the centroid of each block independently.}
+
 \item{clustered_sf}{sf; An sf object with a column \code{cluster} designating
 which cluster each polygon has been assigned to. Most like returned from
 \code{finalize_clusters}.}
 
-\item{n_locations}{integer; number of needed points.}
+\item{crs}{crs; coordinate reference system to be applied to new polygons.}
 
-\item{treatment_number}{integer; the number of treatments or plots that should
-be included in each block.}
+\item{config}{list; a named list containing all the needed inputs. The following
+must be included:
+\itemize{
+ \item{\code{plot_length} numeric; desired plot length in meters.}
+ \item{\code{plot_width} numeric; desired plot width in meters.}
+ \item{\code{border_width} numeric; desired width between plots in meters.}
+ \item{\code{treatment_number} integer; the number of treatments or plots that should be included in each block.}
+ \item{\code{block_number} integer; the number of blocks that should be included in each experiment.}
+}}
 
-\item{plot_length}{numeric; desired plot length in meters.}
-
-\item{plot_width}{numeric; desired plot width in meters.}
-
-\item{border_width}{numeric; desired width between plots in meters.}
-
-\item{crs}{crs; coordinate referense system to be applied to new polygons.}
-
-\item{rotaion_anlge}{integer; **optional** angle by which the original experiment should
+\item{rotation_angle}{integer; **optional** angle by which the original experiment should
 be rotated. Default is NULL, which will result in plots oriented North-South.}
+
+\item{block_cols}{integer; **optional** for "connected" experiment, how many
+columns should the blocks be arranged into? \code{block_cols}*\code{block_rows}
+should be equal to \code{config$block_number}.}
+
+\item{block_rows}{integer; **optional** for "connected" experiment, how many
+rows should the blocks be arranged into? \code{block_cols}*\code{block_rows}
+should be equal to \code{config$block_number}.}
 }
 \value{
 An sf object containing the polygons for each plot in an experiment.

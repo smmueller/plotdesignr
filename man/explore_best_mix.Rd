@@ -4,7 +4,13 @@
 \alias{explore_best_mix}
 \title{explore_best_mix}
 \usage{
-explore_best_mix(processed_data, cluster_number, range = seq(0, 0.5, 0.1))
+explore_best_mix(
+  processed_data,
+  cluster_number,
+  range = seq(0, 0.5, 0.1),
+  plot = TRUE,
+  output_path = NULL
+)
 }
 \arguments{
 \item{processed_data}{sf; An sf object likely returned from \code{make_cluster_data}.
@@ -17,6 +23,14 @@ geometries.}
 These values are passed as the alpha parameter in \code{ClustGeo::hclustgeo}
 and \code{ClustGeo::choicealpha}. The values must be between 0 and 1, the
 default is \code{seq(0, 0.5, 0.1)}.}
+
+\item{plot}{logical; **optional** should plot be returned in the current graphics
+device (likely in RStudio). Default is TRUE.}
+
+\item{output_path}{string; **optional** path where plot should be saved.
+Default is NULL. If path is provided, PDFs with the names
+"mixing_parameters_map_k_clusters" and "mixing_parameters_plot_k_clusters"
+will be created, where k is the integer passed to cluster_number.}
 }
 \value{
 Two plots are returned. The first is the output from \code{ClustGeo::choicealpha}
@@ -26,4 +40,7 @@ value for the mixing paramters (alpha).
 }
 \description{
 Exploratory analysis for choosing mixing parameter
+}
+\note{
+If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 }

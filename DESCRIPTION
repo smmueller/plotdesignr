@@ -16,14 +16,14 @@ Imports:
     sp,
     ClustGeo,
     data.table,
-    RColorBrewer,
-    pryr
+    RColorBrewer
 Depends:
     dplyr,
     sf,
     ggplot2,
     factoextra,
     yaml,
+    pryr,
     R (>= 2.10)
 RoxygenNote: 7.1.1
 Suggests: 

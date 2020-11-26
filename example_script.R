@@ -6,18 +6,6 @@ devtools::load_all()
 
 inputs_config <- read_yaml('research/config_working.yml')
 
-# define arguments
-# Path <- '/Users/Sarah/Google Drive/Martha - Yield Data/Field LN/'
-# Files <- paste0(c('2010', '2012', '2014'), '.shp')
-# File_ids <- c('2010', '2012', '2014')
-# Grid_field_name <- '2010'
-# Var_of_interest <- rep('Yld_Vol_Dr', length(Files))
-#
-# combine_width <- 15/3.281 # ft to meters
-# Alpha <- 50
-# Passes_to_clip <- 3 # controls buffer size
-# Cellsize_scaler <- 2 # controls grid cell size
-
 ################################################################################
 # 1. Create a single data frame to cluster -------------------------------------
 ################################################################################
@@ -27,14 +15,16 @@ cluster_df <- make_cluster_data(config = inputs_config, plot = FALSE)
 # 2. Choose number of Clusters -------------------------------------------------
 ################################################################################
 # view dendrogram to see where clusters might naturally break
-explore_dendrogram(processed_data = cluster_df, cluster_number = 3,
+explore_dendrogram(processed_data = cluster_df, cluster_number = 3, plot = TRUE,
                    output_path = inputs_config$output_path)
 
 # look at some tests to suggest cluster number
-explore_cluster_number(processed_data = cluster_df, kmax = 6)
+explore_cluster_number(processed_data = cluster_df, kmax = 6,
+                       output_path = inputs_config$output_path)
 
 # view how mixing results to choose mixing parameter (alpha in ClustGeo::hclustgeo)
-explore_best_mix(processed_data = cluster_df, cluster_number = 2, range = seq(0, 0.3, 0.1))
+explore_best_mix(processed_data = cluster_df, cluster_number = 2, range = seq(0, 0.3, 0.1),
+                 plot = FALSE, output_path = inputs_config$output_path)
 
 # finalize cluster number and mixing parameter choice
 cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2, mixing_parameter = 0.1)
@@ -43,11 +33,8 @@ cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2,
 ################################################################################
 # 3. Set up simulation experiment ----------------------------------------------
 ################################################################################
-# plot_l <- 300/3.281
-# plot_w <- 45/3.281
-# border_w <- 15/3.281
-# treatment_n <- 4
-# block_n <- 4
+# TODO: an option anywhere in here to save plots? Would be helpful to be able
+# to go back and view experiment configurations. With blocks labeled by number.
 
 # 3.1 Create disconnected experiment
 beta_01 <- make_experiment(experiment_type = 'disconnected',

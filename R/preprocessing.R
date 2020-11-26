@@ -258,15 +258,13 @@ make_cluster_data <- function(config, plot = TRUE){
   # remove any NA rows
   all_data <- multi_year %>% filter_at(vars(-geometry), all_vars(!is.na(.)))
 
+  # plot call
+  input_plot %<a-% plot(all_data, border =  NA)
+
   # save image to output path if one has been given
-  if(!is.null(config$output_path)){
-    save_fig(path = config$output_path, name = 'cluster_data',
-             plot_call = plot(all_data, border =  NA))
-  }
-  # output image to graphics device if plot == TRUE
-  if(plot){
-    plot(all_data, border =  NA)
-  }
+  plot_handler(plot_logical = plot, output_path = config$output_path,
+               plot_call_out = input_plot, plot_call_save = input_plot,
+               plot_name = 'cluster_data')
 
   return(all_data)
 }

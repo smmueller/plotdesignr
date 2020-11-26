@@ -9,14 +9,24 @@
 #' These values are passed as the alpha parameter in \code{ClustGeo::hclustgeo}
 #' and \code{ClustGeo::choicealpha}. The values must be between 0 and 1, the
 #' default is \code{seq(0, 0.5, 0.1)}.
+#' @param plot logical; **optional** should plot be returned in the current graphics
+#' device (likely in RStudio). Default is TRUE.
+#' @param output_path string; **optional** path where plot should be saved.
+#' Default is NULL. If path is provided, PDFs with the names
+#' "mixing_parameters_map_k_clusters" and "mixing_parameters_plot_k_clusters"
+#' will be created, where k is the integer passed to cluster_number.
 #'
 #' @return Two plots are returned. The first is the output from \code{ClustGeo::choicealpha}
 #' and the second is a faceted plot showing the field cluster results for each
 #' level of alpha in \code{range}. This information should be used to choose a
 #' value for the mixing paramters (alpha).
+#'
+#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
-explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5, 0.1)){
+explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5, 0.1),
+                             plot = TRUE, output_path = NULL){
 
+  no_side_effect_warning(plot, output_path)
   # make a copy of the processed data
   plot_data <- data.table::copy(processed_data)
 
@@ -32,10 +42,9 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
   coord_df <- do.call(rbind, st_centroid(processed_data) %>% st_geometry())
   D1 <- dist(coord_df, method = "euclidean")
 
-  # plotting method from ClustGeo
-  par(mfrow = c(1, 2))
-  cr <- ClustGeo::choicealpha(D0, D1, range.alpha = range, K = cluster_number, graph = TRUE)
-  par(mfrow = c(1, 1))
+  # get Q for different levels of alpha
+  cr <- ClustGeo::choicealpha(D0, D1, range.alpha = range, K = cluster_number, graph = FALSE)
+  choicealpha_plot %<a-% ClustGeo::plot.choicealpha(cr)
 
   # plot maps
   for(a in seq_along(range)){
@@ -50,7 +59,17 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
 
   # only plot new columns
   plot_col_names <- names(plot_data)[grepl('cluster_geo', names(plot_data))]
-  plot(plot_data[, plot_col_names], border = NA, pal = RColorBrewer::brewer.pal(8, 'Set1'))
+  choicealpha_map %<a-% plot(plot_data[, plot_col_names], border = NA,
+                             pal = RColorBrewer::brewer.pal(8, 'Set1'))
+
+  plot_handler(plot_logical = plot, output_path = output_path,
+               plot_call_out = choicealpha_plot, plot_call_save = choicealpha_plot,
+               plot_name = paste('mixing_parameter_plot', cluster_number, 'clusters', sep = '_'))
+
+  plot_handler(plot_logical = plot, output_path = output_path,
+               plot_call_out = choicealpha_map, plot_call_save = choicealpha_map,
+               plot_name = paste('mixing_parameter_map', cluster_number, 'clusters', sep = '_'))
+
 }
 
 #' Make dendrogram and single map
@@ -60,13 +79,22 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
 #' Object should include the features to be clustered and their associated polygon
 #' geometries.
 #' @param cluster_number integer; number of clusters to be used.
+#' @param plot logical; **optional** should plot be returned in the current graphics
+#' device (likely in RStudio). Default is TRUE.
+#' @param output_path string; **optional** path where plot should be saved.
+#' Default is NULL. If path is provided, a PDF with the name "dendrogram_k_clusters"
+#' will be created, where k is the integer passed to cluster_number.
 #'
 #' @return A two panel plot with the first panel being the field map colored by
 #' cluster and the second panel being a dedrogram with colored rectangles showing
 #' the clusters. The colors in the two plots should match.
+#'
+#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
 explore_dendrogram <- function(processed_data, cluster_number, plot = TRUE,
                                output_path = NULL){
+
+  no_side_effect_warning(plot, output_path)
   # make a copy of the processed data
   plot_data <- data.table::copy(processed_data)
 
@@ -78,22 +106,28 @@ explore_dendrogram <- function(processed_data, cluster_number, plot = TRUE,
 
   plot_data$clusters <- sub_grp
 
-  # returns dendro_plot
+  # returns or saves dendro_plot
   dendro_plot %<a-% make_dendrogram_plot(plot_data, tree, cluster_number)
 
-  if(plot){
-    dendro_plot
-  }
-
-  # save image to output path if one has been given
-  if(!is.null(output_path)){
-    save_fig(path = output_path,
-             name = paste('dendrogram', cluster_number, 'clusters', sep = '_'),
-             plot_call = dendro_plot)
-  }
+  plot_handler(plot_logical = plot, output_path = output_path,
+               plot_call_out = dendro_plot, plot_call_save = dendro_plot,
+               plot_name = paste('dendrogram', cluster_number, 'clusters', sep = '_'))
 }
 
-# create active binding to plot code
+#' Create active binding to plot code in a split screen device
+#' @title make_dendrogram_plot
+#'
+#' @param plot_data sf; a copy of the \code{processed_data} passed to
+#' \explore{explore_dendrogram}. \code{processed_data} is an sf object, likely
+#' returned from \code{make_cluster_data}. Object should include the features to
+#' be clustered and their associated polygon geometries.
+#' @param tree hclust; an hclust object returned from \code{ClustGeo::hclustgeo}.
+#' @param cluster_number integer; number of clusters to be used.
+#'
+#' @return A two panel plot with the first panel being the field map colored by
+#' cluster and the second panel being a dedrogram with colored rectangles showing
+#' the clusters. The colors in the two plots should match.
+
 make_dendrogram_plot <- function(plot_data, tree, cluster_number){
   # to prevent warning in RColorBrewer call
   n_color <- ifelse(cluster_number <= 2, 3, cluster_number)
@@ -118,15 +152,25 @@ make_dendrogram_plot <- function(plot_data, tree, cluster_number){
 #' geometries.
 #' @param kmax integer; **optional** maximum cluster number to be passed to
 #' factoextra::fviz_nbclust and NbClust::NbClust.
+#' @param plot logical; **optional** should plot be returned in the current graphics
+#' device (likely in RStudio). Default is TRUE.
+#' @param output_path string; **optional** path where plot should be saved.
+#' Default is NULL. If path is provided, a PDF with the name
+#' "suggested_optimal_cluster_number".
 #'
 #' @return A three panel plot showing the relationship between cluster number and
 #' total within sum of squares, silhouette width, and Calinski and Harabasz Index.
 #' These results can be used as a guide for choosing cluster number.
+#'
+#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
-explore_cluster_number <- function(processed_data, kmax = 10){
+explore_cluster_number <- function(processed_data, kmax = 10, plot =  TRUE,
+                                   output_path = NULL){
   if(kmax < 2){
     stop('kmax must be >= 2')
   }
+
+  no_side_effect_warning(plot, output_path)
 
   scaled_df <- scale(st_drop_geometry(processed_data))
 
@@ -149,7 +193,11 @@ explore_cluster_number <- function(processed_data, kmax = 10){
       scale_x_continuous(breaks = 1:kmax, limits = c(1, kmax)) +
       theme(axis.title.y = element_text(size = 10))
 
-  ggpubr::ggarrange(one, two, three)
+  cluster_plot %<a-% print(ggpubr::ggarrange(one, two, three))
+
+  plot_handler(plot_logical = plot, output_path = output_path,
+               plot_call_out = cluster_plot, plot_call_save = cluster_plot,
+               plot_name = 'suggested_optimal_cluster_number')
 }
 
 #' Make final clusters
