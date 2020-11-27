@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{update_field_crs}
 \alias{update_field_crs}
-\title{update_field_crs}
+\title{Update field CRS to UTM zone}
 \usage{
 update_field_crs(field)
 }

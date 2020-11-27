@@ -15,7 +15,7 @@ cluster_df <- make_cluster_data(config = inputs_config, plot = FALSE)
 # 2. Choose number of Clusters -------------------------------------------------
 ################################################################################
 # view dendrogram to see where clusters might naturally break
-explore_dendrogram(processed_data = cluster_df, cluster_number = 3, plot = TRUE,
+explore_dendrogram(processed_data = cluster_df, cluster_number = 3,
                    output_path = inputs_config$output_path)
 
 # look at some tests to suggest cluster number
@@ -38,19 +38,21 @@ cluster_ln <- finalize_clusters(processed_data = cluster_df, cluster_number = 2,
 
 # 3.1 Create disconnected experiment
 beta_01 <- make_experiment(experiment_type = 'disconnected',
-                           clustered_sf = cluster_ln, crs = st_crs(cluster_ln),
-                           config = inputs_config, rotation_angle = -95)
+                           clustered_sf = cluster_ln,
+                           config = inputs_config, rotation_angle = -95,
+                           plot_name = 'beta1')
 
 beta_02 <- make_experiment(experiment_type = 'disconnected',
-                           clustered_sf = cluster_ln, crs = st_crs(cluster_ln),
-                           config = inputs_config, rotation_angle = -95)
+                           clustered_sf = cluster_ln,
+                           config = inputs_config, rotation_angle = -95,
+                           plot_name = 'beta2')
 
 
 # 3.2 Create traditional (connected) experiment
 traditional <- make_experiment(experiment_type = 'connected',
                                clustered_sf = cluster_ln,
-                               crs = st_crs(cluster_ln),
                                config = inputs_config,
+                               plot_name = 'traditional',
                                rotation_angle = -95,
                                block_rows = 2, block_cols = 2)
 
@@ -59,11 +61,10 @@ traditional <- make_experiment(experiment_type = 'connected',
 ################################################################################
 
 # Read in simulation data
-sim_data_list <- get_test_data(path = Path, files = Files, file_ids = File_ids,
-                               var_of_interest = Var_of_interest)
+sim_data_list <- get_test_data(config = inputs_config)
 
 # Find intersection with experiment polygons
-Experiment_List <- list(traditional = traditional, beta1 = beta_01, beta2 = beta_02)
+Experiment_List <- list(traditional = traditional, beta1 = beta_01)
 
 masked_field <- get_experiment_data(experiment_list = Experiment_List,
                                     simulation_data = sim_data_list)

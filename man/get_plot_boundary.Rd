@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{get_plot_boundary}
 \alias{get_plot_boundary}
-\title{get_plot_boundary}
+\title{Create a matrix of the points defining a single plot polygon}
 \usage{
 get_plot_boundary(plot_length, plot_width, x0, y0)
 }

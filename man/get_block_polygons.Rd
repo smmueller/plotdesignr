@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{get_block_polygons}
 \alias{get_block_polygons}
-\title{get_block_polygons}
+\title{Create polygons of a block with plots}
 \usage{
 get_block_polygons(
   treatment_number,

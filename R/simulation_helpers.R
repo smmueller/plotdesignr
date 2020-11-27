@@ -1,31 +1,32 @@
-#' Get a yields to use in simulation
-#' @title get_test_data
+#' @title Get a yields to use in simulation
+#' @export
 #'
-#' @param path string; directory where the files are stored
-#' @param files string; names of files to be opened within the directory given by
-#' \code{path}.
-#' @param file_ids string; names to assign to new columns. Must be in the same
-#' order as \code{files}.
-#' @param var_of_interest string; column name that should be retained for
-#' simulation experiments. Should be either length 1, if the needed name is the
-#' in all files, or length(files).
+#' @param config list; a named list containing all the needed inputs. The following
+#' must be included:
+#' \itemize{
+#'  \item{\code{path} string; directory where the files are stored}
+#'  \item{\code{files} string; names of files to be opened within the directory given by \code{path}.}
+#'  \item{\code{file_ids} string; names to assign to new columns. Must be in the same order as \code{files}.}
+#'  \item{\code{var_of_interest} string; column name that should be retained for simulation experiments. Should be either length 1, if the needed name is the in all files, or length(files).}
+#' }
 #'
 #' @return A named list of sf data frames of the original point values for the resquested
 #' columns, with the CRS converted to UTM.
 
-get_test_data <- function(path, files, file_ids, var_of_interest){
+get_test_data <- function(config){
+  var_of_interest <- config$var_of_interest
 
   # expand var_of_interest if not the same length as files
-  if(length(var_of_interest) > 1 & length(var_of_interest) != length(files)){
+  if(length(var_of_interest) > 1 & length(var_of_interest) != length(config$files)){
     stop('var_of_interest must be either length 1 or length(files)')
   }
-  if(length(var_of_interest) != length(files)){
-    var_of_interest <- rep(var_of_interest, length(files))
+  if(length(var_of_interest) != length(config$files)){
+    var_of_interest <- rep(var_of_interest, length(config$files))
     warning('Assuming the same var_of_interest for all files')
   }
 
   # read in data
-  fields <- get_all_files(path, files, file_ids)
+  fields <- get_all_files(config$path, config$files, config$file_ids)
 
   # subset data to only variable of interest.
   # update name to all be the same as the first var_of_interest
@@ -37,13 +38,13 @@ get_test_data <- function(path, files, file_ids, var_of_interest){
     }
     return(temp_field)
   })
-  names(fields_sub) <- file_ids
+  names(fields_sub) <- config$file_ids
 
   return(fields_sub)
 }
 
-#' Subset simulation data to experimental polygons
-#' @title get_experiment_data
+#' @title Subset simulation data to experimental polygons
+#' @export
 #'
 #' @param experiment_list named list; named list of sf objects returned
 #' from \code{make_experiment} describing experiment polygons. Must be named with
@@ -85,5 +86,3 @@ get_experiment_data <- function(experiment_list, simulation_data){
 
   return(experiment_data)
 }
-
-

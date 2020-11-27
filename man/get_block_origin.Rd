@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{get_block_origin}
 \alias{get_block_origin}
-\title{get_block_origin}
+\title{Find the bottom left (south west) corner of a block}
 \usage{
 get_block_origin(
   centroid,

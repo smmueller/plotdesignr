@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{input_checker}
 \alias{input_checker}
-\title{input_checker}
+\title{Check configuration file}
 \usage{
 input_checker(config, which_function)
 }

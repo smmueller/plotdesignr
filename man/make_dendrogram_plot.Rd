@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_yields.R
 \name{make_dendrogram_plot}
 \alias{make_dendrogram_plot}
-\title{make_dendrogram_plot}
+\title{Create active binding to plot code in a split screen device}
 \usage{
 make_dendrogram_plot(plot_data, tree, cluster_number)
 }

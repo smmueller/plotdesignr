@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{get_utm}
 \alias{get_utm}
-\title{get_utm}
+\title{Find the appropriate UTM based on longitude}
 \usage{
 get_utm(long)
 }

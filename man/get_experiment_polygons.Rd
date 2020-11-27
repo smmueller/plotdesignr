@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{get_experiment_polygons}
 \alias{get_experiment_polygons}
-\title{get_experiment_polygons}
+\title{Create polygons for simulation experiment}
 \usage{
 get_experiment_polygons(
   xy_coords,

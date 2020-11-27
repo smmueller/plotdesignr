@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{get_field_boundary}
 \alias{get_field_boundary}
-\title{get_field_boundary}
+\title{Create a field boundary from points in an sf object}
 \usage{
 get_field_boundary(field, alpha)
 }

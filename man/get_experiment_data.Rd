@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulation_helpers.R
 \name{get_experiment_data}
 \alias{get_experiment_data}
-\title{get_experiment_data}
+\title{Subset simulation data to experimental polygons}
 \usage{
 get_experiment_data(experiment_list, simulation_data)
 }

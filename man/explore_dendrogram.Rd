@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_yields.R
 \name{explore_dendrogram}
 \alias{explore_dendrogram}
-\title{explore_dedrogram}
+\title{Make dendrogram and single map}
 \usage{
 explore_dendrogram(
   processed_data,
@@ -32,7 +32,4 @@ the clusters. The colors in the two plots should match.
 }
 \description{
 Make dendrogram and single map
-}
-\note{
-If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_yields.R
 \name{finalize_clusters}
 \alias{finalize_clusters}
-\title{finalize_clusters}
+\title{Make final clusters}
 \usage{
 finalize_clusters(processed_data, cluster_number, mixing_parameter)
 }

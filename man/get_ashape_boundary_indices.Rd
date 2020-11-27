@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{get_ashape_boundary_indices}
 \alias{get_ashape_boundary_indices}
-\title{get_ashape_boundary_indices}
+\title{Get the coordinate indices the descripe the boundary of an ashape object}
 \usage{
 get_ashape_boundary_indices(ashape)
 }

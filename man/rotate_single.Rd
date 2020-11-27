@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{rotate_single}
 \alias{rotate_single}
-\title{rotate_single}
+\title{Rotation around a single point}
 \usage{
 rotate_single(a)
 }

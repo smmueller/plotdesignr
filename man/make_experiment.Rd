@@ -2,14 +2,14 @@
 % Please edit documentation in R/create_experiments.R
 \name{make_experiment}
 \alias{make_experiment}
-\title{make_experiment}
+\title{Make an experiment}
 \usage{
 make_experiment(
   experiment_type,
   clustered_sf,
   n_locations,
-  crs,
   config,
+  plot_name,
   rotation_angle = NULL,
   block_cols = NULL,
   block_rows = NULL
@@ -25,8 +25,6 @@ the user to select the centroid of each block independently.}
 which cluster each polygon has been assigned to. Most like returned from
 \code{finalize_clusters}.}
 
-\item{crs}{crs; coordinate reference system to be applied to new polygons.}
-
 \item{config}{list; a named list containing all the needed inputs. The following
 must be included:
 \itemize{
@@ -36,6 +34,10 @@ must be included:
  \item{\code{treatment_number} integer; the number of treatments or plots that should be included in each block.}
  \item{\code{block_number} integer; the number of blocks that should be included in each experiment.}
 }}
+
+\item{plot_name}{string; name that should be given to the figure. Do not include ".pdf".
+If no plotting directory has been given in the \code{config}, NULL should be
+passed.}
 
 \item{rotation_angle}{integer; **optional** angle by which the original experiment should
 be rotated. Default is NULL, which will result in plots oriented North-South.}
@@ -53,4 +55,8 @@ An sf object containing the polygons for each plot in an experiment.
 }
 \description{
 Make an experiment
+}
+\note{
+The CRS from \code{clustered_sf} will be used as the CRS to draw the polygons,
+therefore it is important that the CRS is in UTM.
 }

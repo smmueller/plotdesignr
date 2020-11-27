@@ -1,5 +1,5 @@
-#' Exploratory analysis for choosing mixing parameter
-#' @title explore_best_mix
+#' @title Exploratory analysis for choosing mixing parameter
+#' @export
 #'
 #' @param processed_data sf; An sf object likely returned from \code{make_cluster_data}.
 #' Object should include the features to be clustered and their associated polygon
@@ -20,8 +20,6 @@
 #' and the second is a faceted plot showing the field cluster results for each
 #' level of alpha in \code{range}. This information should be used to choose a
 #' value for the mixing paramters (alpha).
-#'
-#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
 explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5, 0.1),
                              plot = TRUE, output_path = NULL){
@@ -62,18 +60,15 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
   choicealpha_map %<a-% plot(plot_data[, plot_col_names], border = NA,
                              pal = RColorBrewer::brewer.pal(8, 'Set1'))
 
-  plot_handler(plot_logical = plot, output_path = output_path,
-               plot_call_out = choicealpha_plot, plot_call_save = choicealpha_plot,
+  plot_handler(plot_logical = plot, output_path = output_path, plot_call = choicealpha_plot,
                plot_name = paste('mixing_parameter_plot', cluster_number, 'clusters', sep = '_'))
 
-  plot_handler(plot_logical = plot, output_path = output_path,
-               plot_call_out = choicealpha_map, plot_call_save = choicealpha_map,
+  plot_handler(plot_logical = plot, output_path = output_path, plot_call = choicealpha_map,
                plot_name = paste('mixing_parameter_map', cluster_number, 'clusters', sep = '_'))
-
 }
 
-#' Make dendrogram and single map
-#' @title explore_dedrogram
+#' @title Make dendrogram and single map
+#' @export
 #'
 #' @param processed_data sf; An sf object likely returned from \code{make_cluster_data}.
 #' Object should include the features to be clustered and their associated polygon
@@ -88,8 +83,6 @@ explore_best_mix <- function(processed_data, cluster_number, range = seq(0, 0.5,
 #' @return A two panel plot with the first panel being the field map colored by
 #' cluster and the second panel being a dedrogram with colored rectangles showing
 #' the clusters. The colors in the two plots should match.
-#'
-#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
 explore_dendrogram <- function(processed_data, cluster_number, plot = TRUE,
                                output_path = NULL){
@@ -109,13 +102,11 @@ explore_dendrogram <- function(processed_data, cluster_number, plot = TRUE,
   # returns or saves dendro_plot
   dendro_plot %<a-% make_dendrogram_plot(plot_data, tree, cluster_number)
 
-  plot_handler(plot_logical = plot, output_path = output_path,
-               plot_call_out = dendro_plot, plot_call_save = dendro_plot,
+  plot_handler(plot_logical = plot, output_path = output_path, plot_call = dendro_plot,
                plot_name = paste('dendrogram', cluster_number, 'clusters', sep = '_'))
 }
 
-#' Create active binding to plot code in a split screen device
-#' @title make_dendrogram_plot
+#' @title Create active binding to plot code in a split screen device
 #'
 #' @param plot_data sf; a copy of the \code{processed_data} passed to
 #' \explore{explore_dendrogram}. \code{processed_data} is an sf object, likely
@@ -144,8 +135,8 @@ make_dendrogram_plot <- function(plot_data, tree, cluster_number){
   close.screen(all = TRUE)
 }
 
-#' Tests for appropriate cluster number
-#' @title explore_cluster_number
+#' @title Tests for appropriate cluster number
+#' @export
 #'
 #' @param processed_data sf; An sf object likely returned from \code{make_cluster_data}.
 #' Object should include the features to be clustered and their associated polygon
@@ -161,8 +152,6 @@ make_dendrogram_plot <- function(plot_data, tree, cluster_number){
 #' @return A three panel plot showing the relationship between cluster number and
 #' total within sum of squares, silhouette width, and Calinski and Harabasz Index.
 #' These results can be used as a guide for choosing cluster number.
-#'
-#' @note If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 
 explore_cluster_number <- function(processed_data, kmax = 10, plot =  TRUE,
                                    output_path = NULL){
@@ -195,13 +184,12 @@ explore_cluster_number <- function(processed_data, kmax = 10, plot =  TRUE,
 
   cluster_plot %<a-% print(ggpubr::ggarrange(one, two, three))
 
-  plot_handler(plot_logical = plot, output_path = output_path,
-               plot_call_out = cluster_plot, plot_call_save = cluster_plot,
+  plot_handler(plot_logical = plot, output_path = output_path, plot_call = cluster_plot,
                plot_name = 'suggested_optimal_cluster_number')
 }
 
-#' Make final clusters
-#' @title finalize_clusters
+#' @title Make final clusters
+#' @export
 #'
 #' @param processed_data sf; An sf object likely returned from \code{make_cluster_data}.
 #' Object should include the features to be clustered and their associated polygon

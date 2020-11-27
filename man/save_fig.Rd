@@ -2,9 +2,9 @@
 % Please edit documentation in R/helper_functions.R
 \name{save_fig}
 \alias{save_fig}
-\title{save_fig}
+\title{Save a figure as a pdf}
 \usage{
-save_fig(path, name, plot_call)
+save_fig(path, name, plot_call, plot_logical)
 }
 \arguments{
 \item{path}{string; path to the directory where the figure should be saved.
@@ -15,6 +15,9 @@ already a figure in the directory with the same name, it will be overwritten.}
 
 \item{plot_call}{plot; either the code to generate a plot (ex: \code{plot(1:10)})
 or an active binding to code that generates a plot.}
+
+\item{plot_logical}{logical; TRUE if a plot has already been created and
+displayed in the default graphics device, otherwise FALSE.}
 }
 \value{
 A saved pdf of the figure created by \code{plot_call} in the directory

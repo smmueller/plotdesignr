@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_experiments.R
 \name{choose_location}
 \alias{choose_location}
-\title{choose_location}
+\title{Choose locations of simulated expeirment}
 \usage{
 choose_location(clustered_sf, n_locations)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{make_cluster_data}
 \alias{make_cluster_data}
-\title{make_cluster_data}
+\title{Create a single data frame of field attributes from multiple files to use in clustering}
 \usage{
 make_cluster_data(config, plot = TRUE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{get_field_grid}
 \alias{get_field_grid}
-\title{get_field_grid}
+\title{Make polygon grid of field}
 \usage{
 get_field_grid(field, alpha, harvest_width, passes_to_clip, cellsize_scaler)
 }

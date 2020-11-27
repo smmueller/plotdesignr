@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{no_side_effect_warning}
 \alias{no_side_effect_warning}
-\title{no_side_effect_warning}
+\title{Stop execution if nothing is going to be returned or saved}
 \usage{
 no_side_effect_warning(plot, output_path)
 }

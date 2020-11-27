@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{get_all_files}
 \alias{get_all_files}
-\title{get_all_files}
+\title{Read one or more files}
 \usage{
 get_all_files(path, files, file_ids, to_utm = TRUE)
 }

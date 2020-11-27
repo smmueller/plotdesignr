@@ -1,5 +1,4 @@
-#' Create a matrix of the points defining a single plot polygon
-#' @title get_plot_boundary
+#' @title Create a matrix of the points defining a single plot polygon
 #'
 #' @param plot_length numeric; desired plot length in meters.
 #' @param plot_width numeric; desired plot width in meters.
@@ -22,8 +21,7 @@ get_plot_boundary <- function(plot_length, plot_width, x0, y0){
   return(one_plot)
 }
 
-#' Find the bottom left (south west) corner of a block
-#' @title get_block_origin
+#' @title Find the bottom left (south west) corner of a block
 #'
 #' @param centroid numeric vector; named vector of the xy point of the desired
 #' block centroid. Must have the names \code{x} and \code{y}.
@@ -54,8 +52,7 @@ get_block_origin <- function(centroid, treatment_number, plot_length, plot_width
   return(origin)
 }
 
-#' Create polygons of a block with plots
-#' @title get_block_polygons
+#' @title Create polygons of a block with plots
 #'
 #' @param treatment_number integer; the number of treatments or plots that should
 #' be included in each block.
@@ -76,18 +73,6 @@ get_block_origin <- function(centroid, treatment_number, plot_length, plot_width
 get_block_polygons <- function(treatment_number, plot_length, plot_width,
                                border_width, crs, origin){
 
-  # if(is.null(centroid) & is.null(origin)){
-  #   stop('Either block centroid or origin must be supplied. See ?get_block_polygons if unsure of which should be used.')
-  # }
-  # if(!is.null(centroid) & !is.null(origin)){
-  #   stop('Both block centroid and origin has been provided. Please only provide one. See ?get_block_polygons if unsure of which should be used.')
-  # }
-  #
-  # if(!is.null(centroid)){
-  #   # find block origin based on the desired centroid
-  #   origin <- get_block_origin(centroid, treatment_number, plot_length, plot_width, border_width)
-  # }
-
   plot_list <- lapply(1:treatment_number, function(i){
     if(i == 1){
       temp_plot <- get_plot_boundary(plot_length, plot_width, x0 = origin['x'], y0 = origin['y'])
@@ -107,8 +92,7 @@ get_block_polygons <- function(treatment_number, plot_length, plot_width,
   return(one_block)
 }
 
-
-#' Find the bottom left (south west) corner of each block in a connected experiment
+#' @title Find the bottom left (south west) corner of each block in a connected experiment
 #'
 #' @param centroid numeric vector; named vector of the xy point of the center of
 #' the whole experiment. Must have the names \code{x} and \code{y}.
@@ -166,8 +150,7 @@ get_experiment_origins <- function(centroid, treatment_number, plot_length,
   return(origin_matrix)
 }
 
-#' Rotation around a single point
-#' @title rotate_single
+#' @title Rotation around a single point
 #'
 #' @param a numeric
 #'
@@ -178,8 +161,7 @@ rotate_single <- function(a){
   matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 }
 
-#' Rotate a whole experiment by a give angle
-#' @title rotate_experiment
+#' @title Merge experiment or block polygon and rotate by a give angle
 #'
 #' @param original_experiment sf; an sf object containing the polygons for each
 #' plot and/or blocks. The rotation will occur around the centroid of \code{original_experiment}.
@@ -193,7 +175,7 @@ rotate_single <- function(a){
 #'
 #' @note Taken from https://stackoverflow.com/questions/51282724/creating-a-regular-polygon-grid-over-a-spatial-extent-rotated-by-a-given-angle
 
-rotate_experiment <- function(original_experiment, rotation_angle){
+rotate_polygon <- function(original_experiment, rotation_angle){
   rotated <- (st_geometry(original_experiment) -
               st_centroid(st_union(original_experiment))) * rotate_single(rotation_angle * pi / 180) +
               st_centroid(st_union(original_experiment))
@@ -205,8 +187,38 @@ rotate_experiment <- function(original_experiment, rotation_angle){
   return(rotated_dat)
 }
 
-#' Choose locations of simulated expeirment
-#' @title choose_location
+#' @title Rotate either connected or disconnected experiment by given angle
+#'
+#' @param original_experiment sf; an sf object containing the polygons for each
+#' plot and/or blocks. The rotation will occur around the centroid of \code{original_experiment}.
+#' Therefore, if each block should be rotated individually, they need to be passed
+#' one at a time.
+#' @param rotaion_anlge integer; angle by which the original experiment should
+#' be rotated.
+#' @param experiment_type string; which experiment type should be created? Current
+#' options are "connected", which creates as single traditional experiment and
+#' expects the user to select only one centroid, or "disconnected" which expects
+#' the user to select the centroid of each block independently.
+#'
+#' @return The rotated sf object. Will have the same dimentions as \code{original_experiment}
+#' but with the POLYGON geometries rotated.
+
+rotate_experiment <- function(original_experiment, rotation_angle, experiment_type){
+  # for disconnected experiments, blocks must be rotated seperately
+  if(experiment_type == 'disconnected'){
+    blocks <- unique(original_experiment$block)
+    exp_rot_list <- lapply(blocks, function(b){
+      rotate_polygon(original_experiment %>% filter(block == b), rotation_angle = rotation_angle)
+    })
+    rotated <- do.call(rbind, exp_rot_list)
+  } else{
+    rotated <- rotate_polygon(original_experiment, rotation_angle = rotation_angle)
+  }
+
+  return(rotated)
+}
+
+#' @title Choose locations of simulated expeirment
 #'
 #' @param clustered_sf sf; An sf object with a column \code{cluster} designating
 #' which cluster each polygon has been assigned to. Most like returned from
@@ -228,11 +240,11 @@ choose_location <- function(clustered_sf, n_locations){
   loc <- graphics::locator(n = n_locations, type = 'n')
   xy_coords <- cbind(x = loc$x, y = loc$y)
   palette('default')
+
   return(xy_coords)
 }
 
-#' Create polygons for simulation experiment
-#' @title get_experiment_polygons
+#' @title Create polygons for simulation experiment
 #'
 #' @param xy_coords matrix; A matrix with columns \code{x, y} representing the
 #' coordinates of either the centroid of each block (disconnected experiment),
@@ -264,8 +276,8 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
   return(experiment)
 }
 
-#' Make an experiment
-#' @title make_experiment
+#' @title Make an experiment
+#' @export
 #'
 #' @param experiment_type string; which experiment type should be created? Current
 #' options are "connected", which creates as single traditional experiment and
@@ -274,7 +286,6 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
 #' @param clustered_sf sf; An sf object with a column \code{cluster} designating
 #' which cluster each polygon has been assigned to. Most like returned from
 #' \code{finalize_clusters}.
-#' @param crs crs; coordinate reference system to be applied to new polygons.
 #' @param config list; a named list containing all the needed inputs. The following
 #' must be included:
 #' \itemize{
@@ -284,6 +295,9 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
 #'  \item{\code{treatment_number} integer; the number of treatments or plots that should be included in each block.}
 #'  \item{\code{block_number} integer; the number of blocks that should be included in each experiment.}
 #' }
+#' @param plot_name string; name that should be given to the figure. Do not include ".pdf".
+#' If no plotting directory has been given in the \code{config}, NULL should be
+#' passed.
 #' @param rotation_angle integer; **optional** angle by which the original experiment should
 #' be rotated. Default is NULL, which will result in plots oriented North-South.
 #' @param block_cols integer; **optional** for "connected" experiment, how many
@@ -294,9 +308,12 @@ get_experiment_polygons <- function(xy_coords, treatment_number, plot_length,
 #' should be equal to \code{config$block_number}.
 #'
 #' @return An sf object containing the polygons for each plot in an experiment.
+#'
+#' @note The CRS from \code{clustered_sf} will be used as the CRS to draw the polygons,
+#' therefore it is important that the CRS is in UTM.
 
 make_experiment <- function(experiment_type, clustered_sf, n_locations,
-                            crs, config, rotation_angle = NULL,
+                            config, plot_name, rotation_angle = NULL,
                             block_cols = NULL, block_rows = NULL){
 
   if(!(experiment_type %in% c('connected', 'disconnected'))){
@@ -312,13 +329,17 @@ make_experiment <- function(experiment_type, clustered_sf, n_locations,
   # how many centroids need to be selected?
   n_locations <- ifelse(experiment_type == 'disconnected', config$block_number, 1)
 
+  # store original margins and reset for better plots
+  original_mar <- par()$mar
+  par(mar = c(1.0, 1.0, 1.2, 1.0))
+
   locations <- choose_location(clustered_sf = clustered_sf, n_locations = n_locations)
 
   params_list <- list(treatment_number = config$treatment_number,
                       plot_length = config$plot_length,
                       plot_width = config$plot_width,
                       border_width = config$border_width,
-                      crs = crs)
+                      crs = st_crs(clustered_sf))
 
   if(experiment_type == 'disconnected'){
     block_origins <- t(apply(locations, 1, function(row){
@@ -345,20 +366,37 @@ make_experiment <- function(experiment_type, clustered_sf, n_locations,
   exp <- do.call(get_experiment_polygons, params_list)
 
   if(!is.null(rotation_angle)){
-    # for disconnected experiments, blocks must be rotated seperately
-    if(experiment_type == 'disconnected'){
-      blocks <- unique(exp$block)
-      exp_rot_list <- lapply(blocks, function(b){
-        rotate_experiment(exp %>% filter(block == b), rotation_angle = rotation_angle)
-      })
-      exp <- do.call(rbind, exp_rot_list)
-    }else{
-      exp <- rotate_experiment(exp, rotation_angle = rotation_angle)
-    }
+    exp <- rotate_experiment(original_experiment = exp,
+                             rotation_angle = rotation_angle,
+                             experiment_type = experiment_type)
   }
 
-  plot(exp[, 'block'], add = T, border = 'black')
+  plot_exp <- plot_experiment(exp)
 
+  plot_handler(plot_logical = TRUE, output_path = config$output_path,
+               plot_call = plot_exp, plot_name = plot_name)
+
+  # reset plot margins
+  par(mar = original_mar)
   return(exp)
 }
 
+#' @title Plot experiment polygons
+#'
+#' @param experiment sf; an sf object containing the polygons for each
+#' plot and/or blocks.
+#'
+#' @return Addes the plotted polygons to an existing map of the experiment with
+#' labels containing the block numbers.
+
+plot_experiment <- function(experiment){
+  num <- lapply(unique(experiment$block), function(b){
+    experiment %>% filter(block == b) %>% st_union() %>% st_centroid() %>% st_sf()
+  })
+  num <- do.call(rbind, num)
+  num$block_lab <- as.character(unique(experiment$block))
+  plot(experiment[, 'block'], add = T, border = 'black')
+
+  plot(num, pch = 15, cex = 3, col = 'white', add = TRUE)
+  plot(num, pch = num$block_lab, cex = 1, col = 'black', add = TRUE)
+}

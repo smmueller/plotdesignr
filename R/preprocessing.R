@@ -1,5 +1,4 @@
-#' Create a field boundary from points in an sf object
-#' @title get_field_boundary
+#' @title Create a field boundary from points in an sf object
 #'
 #' @param field sf; spatial object with points
 #' @param alpha numeric; alpha value to be passed to \code{alphahull::ashape}.
@@ -27,8 +26,7 @@ get_field_boundary <- function(field, alpha){
   return(poly)
 }
 
-#' Get the coordinate indices the descripe the boundary of an ashape object
-#' @title get_ashape_boundary_indices
+#' @title Get the coordinate indices the descripe the boundary of an ashape object
 #'
 #' @param ashape ashape; an object returned from alphahull::ashape.
 #'
@@ -71,8 +69,7 @@ get_ashape_boundary_indices <- function(ashape){
   return(pathX)
 }
 
-#' Find the appropriate UTM based on longitude
-#' @title get_utm
+#' @title Find the appropriate UTM based on longitude
 #'
 #' @param long numeric; longitude. Longitude should be given as degrees East.
 #' Examples: San Fransico, CA is -122, Sydney Australia is 151.
@@ -87,8 +84,7 @@ get_utm <- function(long) {
   return(utm)
 }
 
-#' Make polygon grid of field
-#' @title get_field_grid
+#' @title Make polygon grid of field
 #'
 #' @param field sf; an sf object of point geometries.
 #' @param alpha numeric; parameter that controls the level of simplication in the
@@ -131,8 +127,7 @@ get_field_grid <- function(field, alpha, harvest_width, passes_to_clip, cellsize
   return(poly_grid)
 }
 
-#' Update field CRS to UTM zone
-#' @title update_field_crs
+#' @title Update field CRS to UTM zone
 #'
 #' @param field sf; an sf object. The longitude of the bbox is used to find the
 #' correct UTM zone.
@@ -150,8 +145,7 @@ update_field_crs <- function(field){
   return(temp_utm_field)
 }
 
-#' Read one or more files
-#' @title get_all_files
+#' @title Read one or more files
 #'
 #' @param path string; directory where the files are stored
 #' @param files string; names of files to be opened within the directory given by
@@ -178,8 +172,8 @@ get_all_files <- function(path, files, file_ids, to_utm = TRUE){
   return(fields)
 }
 
-#' Create a single data frame of field attributes from multiple files to use in clustering
-#' @title make_cluster_data
+#' @title Create a single data frame of field attributes from multiple files to use in clustering
+#' @export
 #'
 #' @param config list; a named list containing all the needed inputs. The following
 #' must be included:
@@ -208,7 +202,6 @@ get_all_files <- function(path, files, file_ids, to_utm = TRUE){
 #' by \code{alpha}, minus \code{harvest_width * passes_to_clip}. The value of each
 #' polygon represents the median of the underlying point observations that fell
 #' within each polygon in the grid.
-#' @export
 #'
 #' @note
 #' TODO can you pass multiple variable names to var_of_interest?
@@ -263,7 +256,7 @@ make_cluster_data <- function(config, plot = TRUE){
 
   # save image to output path if one has been given
   plot_handler(plot_logical = plot, output_path = config$output_path,
-               plot_call_out = input_plot, plot_call_save = input_plot,
+               plot_call = input_plot,
                plot_name = 'cluster_data')
 
   return(all_data)

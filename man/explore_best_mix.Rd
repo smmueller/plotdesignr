@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_yields.R
 \name{explore_best_mix}
 \alias{explore_best_mix}
-\title{explore_best_mix}
+\title{Exploratory analysis for choosing mixing parameter}
 \usage{
 explore_best_mix(
   processed_data,
@@ -40,7 +40,4 @@ value for the mixing paramters (alpha).
 }
 \description{
 Exploratory analysis for choosing mixing parameter
-}
-\note{
-If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 }

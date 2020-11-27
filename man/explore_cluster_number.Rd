@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_yields.R
 \name{explore_cluster_number}
 \alias{explore_cluster_number}
-\title{explore_cluster_number}
+\title{Tests for appropriate cluster number}
 \usage{
 explore_cluster_number(
   processed_data,
@@ -33,7 +33,4 @@ These results can be used as a guide for choosing cluster number.
 }
 \description{
 Tests for appropriate cluster number
-}
-\note{
-If plot = FALSE and output_path = NULL, nothing will be returned or saved.
 }

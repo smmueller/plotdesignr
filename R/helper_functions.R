@@ -1,5 +1,4 @@
-#' Check configuration file
-#' @title input_checker
+#' @title Check configuration file
 #'
 #' @param config list; a named list containing all the needed inputs.
 #' @param which_function string; string indicating which requirement list should
@@ -53,8 +52,7 @@ input_checker <- function(config, which_function){
   }
 }
 
-#' Save a figure as a pdf
-#' @title save_fig
+#' @title Save a figure as a pdf
 #'
 #' @param path string; path to the directory where the figure should be saved.
 #' If the directory does not already exist, it will be created. If there is
@@ -62,59 +60,58 @@ input_checker <- function(config, which_function){
 #' @param name string; name that should be given to the figure. Do not include ".pdf".
 #' @param plot_call plot; either the code to generate a plot (ex: \code{plot(1:10)})
 #' or an active binding to code that generates a plot.
+#' @param plot_logical logical; TRUE if a plot has already been created and
+#' displayed in the default graphics device, otherwise FALSE.
 #'
 #' @return A saved pdf of the figure created by \code{plot_call} in the directory
 #' named by \code{path}.
 
-save_fig <- function(path, name, plot_call){
+save_fig <- function(path, name, plot_call, plot_logical){
   # check if output directory exists, if not create it
   if(!dir.exists(path)){
     dir.create(path)
   }
+  # if plot has already been generated, just copy it. Otherwise create it
+  if(plot_logical){
+    dev.copy(pdf, paste0(path, name, '.pdf'), width = 5, height = 4)
+  } else{
+    pdf(paste0(path, name, '.pdf'), width = 5, height = 4)
+    plot_call
+  }
 
-  pdf(paste0(path, name, '.pdf'), width = 5, height = 4)
-  plot_call
   trash <- dev.off()
 }
 
-#' Single call for saving and displaying plots
-#' @title plot_handler
+#' @title Single call for saving and displaying plots
 #'
 #' @param plot_logical logical; TRUE if a plot should be displayed in the default
 #' graphics device, FALSE if no plot should be displayed.
 #' @param output_path string;  path to the directory where the figure should be saved.
 #' If the directory does not already exist, it will be created. If there is
 #' already a figure in the directory with the same name, it will be overwritten.
-#' @param plot_call_out plot; either the code to generate a plot (ex: \code{plot(1:10)})
-#' or an active binding to code that generates a plot. Should be the same as \code{plot_call_save}.
-#' @param plot_call_save plot; either the code to generate a plot (ex: \code{plot(1:10)})
-#' or an active binding to code that generates a plot. Should be the same as \code{plot_call_out}.
+#' @param plot_call plot; either the code to generate a plot (ex: \code{plot(1:10)})
+#' or an active binding to code that generates a plot.
 #' @param plot_name string; name that should be given to the figure. Do not include ".pdf".
 #'
 #' @return Either a figure output to the default graphics device, a saved pdf,
 #' or both.
-#'
-#' @note The use of two arguments, plot_call_out and plot_call_save is a hack
-#' to because there is come kind of scoping or binding problem that would not
-#' allow a single plot call argument to be both output and saved in two calls.
 
-# TODO: fix plot_call_out & plot_call_save
-plot_handler <- function(plot_logical, output_path, plot_call_out, plot_call_save, plot_name){
+plot_handler <- function(plot_logical, output_path, plot_call, plot_name){
 
   if(plot_logical){
-    plot_call_out
+    plot_call
   }
 
   # save image to output path if one has been given
   if(!is.null(output_path)){
     save_fig(path = output_path,
              name = plot_name,
-             plot_call = plot_call_save)
+             plot_call = plot_call,
+             plot_logical = plot_logical)
   }
 }
 
-#' Stop execution if nothing is going to be returned or saved
-#' @title no_side_effect_warning
+#' @title Stop execution if nothing is going to be returned or saved
 #'
 #' @param plot logical; should plot be returned in the current graphics
 #' device (likely in RStudio).

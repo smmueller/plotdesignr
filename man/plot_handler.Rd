@@ -2,15 +2,9 @@
 % Please edit documentation in R/helper_functions.R
 \name{plot_handler}
 \alias{plot_handler}
-\title{plot_handler}
+\title{Single call for saving and displaying plots}
 \usage{
-plot_handler(
-  plot_logical,
-  output_path,
-  plot_call_out,
-  plot_call_save,
-  plot_name
-)
+plot_handler(plot_logical, output_path, plot_call, plot_name)
 }
 \arguments{
 \item{plot_logical}{logical; TRUE if a plot should be displayed in the default
@@ -20,11 +14,8 @@ graphics device, FALSE if no plot should be displayed.}
 If the directory does not already exist, it will be created. If there is
 already a figure in the directory with the same name, it will be overwritten.}
 
-\item{plot_call_out}{plot; either the code to generate a plot (ex: \code{plot(1:10)})
-or an active binding to code that generates a plot. Should be the same as \code{plot_call_save}.}
-
-\item{plot_call_save}{plot; either the code to generate a plot (ex: \code{plot(1:10)})
-or an active binding to code that generates a plot. Should be the same as \code{plot_call_out}.}
+\item{plot_call}{plot; either the code to generate a plot (ex: \code{plot(1:10)})
+or an active binding to code that generates a plot.}
 
 \item{plot_name}{string; name that should be given to the figure. Do not include ".pdf".}
 }
@@ -34,9 +25,4 @@ or both.
 }
 \description{
 Single call for saving and displaying plots
-}
-\note{
-The use of two arguments, plot_call_out and plot_call_save is a hack
-to because there is come kind of scoping or binding problem that would not
-allow a single plot call argument to be both output and saved in two calls.
 }

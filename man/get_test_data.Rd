@@ -2,22 +2,19 @@
 % Please edit documentation in R/simulation_helpers.R
 \name{get_test_data}
 \alias{get_test_data}
-\title{get_test_data}
+\title{Get a yields to use in simulation}
 \usage{
-get_test_data(path, files, file_ids, var_of_interest)
+get_test_data(config)
 }
 \arguments{
-\item{path}{string; directory where the files are stored}
-
-\item{files}{string; names of files to be opened within the directory given by
-\code{path}.}
-
-\item{file_ids}{string; names to assign to new columns. Must be in the same
-order as \code{files}.}
-
-\item{var_of_interest}{string; column name that should be retained for
-simulation experiments. Should be either length 1, if the needed name is the
-in all files, or length(files).}
+\item{config}{list; a named list containing all the needed inputs. The following
+must be included:
+\itemize{
+ \item{\code{path} string; directory where the files are stored}
+ \item{\code{files} string; names of files to be opened within the directory given by \code{path}.}
+ \item{\code{file_ids} string; names to assign to new columns. Must be in the same order as \code{files}.}
+ \item{\code{var_of_interest} string; column name that should be retained for simulation experiments. Should be either length 1, if the needed name is the in all files, or length(files).}
+}}
 }
 \value{
 A named list of sf data frames of the original point values for the resquested
