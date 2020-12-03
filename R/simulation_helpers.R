@@ -26,7 +26,7 @@ get_test_data <- function(config){
   }
 
   # read in data
-  fields <- get_all_files(config$path, config$files, config$file_ids)
+  fields <- get_all_files(config)
 
   # subset data to only variable of interest.
   # update name to all be the same as the first var_of_interest

@@ -146,6 +146,7 @@ update_field_crs <- function(field){
 }
 
 #' @title Read one or more files
+#' @export
 #'
 #' @param path string; directory where the files are stored
 #' @param files string; names of files to be opened within the directory given by
@@ -156,10 +157,10 @@ update_field_crs <- function(field){
 #'
 #' @return A named list of sf objects
 
-get_all_files <- function(path, files, file_ids, to_utm = TRUE){
+get_all_files <- function(config, to_utm = TRUE){
   # read in each field, remove any duplicated rows, update to UTM
-  fields <- lapply(files, function(file){
-    temp_field <- st_read(paste0(path, file))
+  fields <- lapply(config$files, function(file){
+    temp_field <- st_read(paste0(config$path, file))
     temp_field <- temp_field %>% distinct(.keep_all = TRUE)
 
     if(to_utm){
@@ -167,7 +168,7 @@ get_all_files <- function(path, files, file_ids, to_utm = TRUE){
     }
     return(temp_field)
   })
-  names(fields) <- file_ids
+  names(fields) <- config$file_ids
 
   return(fields)
 }
@@ -213,7 +214,7 @@ make_cluster_data <- function(config, plot = TRUE){
   input_checker(config, 'make_cluster_data')
 
   # read in each field, remove any duplicated rows, update to UTM
-  fields <- get_all_files(config$path, config$files, config$file_ids)
+  fields <- get_all_files(config)
 
   # make grid of a single field
   field_grid <- get_field_grid(field = fields[[config$grid_field_name]],

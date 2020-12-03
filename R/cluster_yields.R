@@ -131,7 +131,7 @@ make_dendrogram_plot <- function(plot_data, tree, cluster_number){
   screen(2)
     # dendrogram
   plot(tree, hang = -1, labels = FALSE, main = NULL, xlab = NA, sub = NA)
-  rect.hclust(tree, k = cluster_number, border = RColorBrewer::brewer.pal(n_color, 'Set1'))
+  rect.hclust(tree, k = cluster_number, border = 'red') # RColorBrewer::brewer.pal(n_color, 'Set1')
   close.screen(all = TRUE)
 }
 

@@ -1,9 +1,5 @@
 devtools::load_all()
 
-# what to do with these global options?
-# default_margin <- par()$mar
-# par(mar=rep(0,4))
-
 inputs_config <- read_yaml('research/config_working.yml')
 
 ################################################################################

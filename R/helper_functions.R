@@ -16,7 +16,7 @@ input_checker <- function(config, which_function){
   # check names
   name_errors <- NULL
   for(i in seq_along(required)){
-    if(!(required[[i]]['name'] %in% names(inputs_config))){
+    if(!(required[[i]]['name'] %in% names(config))){
       name_errors <- append(name_errors, required[[i]]['name'])
     }
   }
@@ -36,10 +36,10 @@ input_checker <- function(config, which_function){
     )
 
     which_name <- required[[i]]['name']
-    if(!which_type(inputs_config[[which_name]])){
+    if(!which_type(config[[which_name]])){
       type_errors <- append(type_errors, required[[i]]['name'])
       expected <- append(expected, required[[i]]['type'])
-      found <- append(found, class(inputs_config[[which_name]]))
+      found <- append(found, class(config[[which_name]]))
     }
   }
   if(length(type_errors) > 0){
