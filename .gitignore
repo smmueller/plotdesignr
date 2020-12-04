@@ -18,3 +18,4 @@
 
 # documentation subdirectories
 documentation/**/
+*.html

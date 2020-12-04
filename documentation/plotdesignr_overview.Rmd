@@ -18,19 +18,21 @@ devtools::load_all()
 In large field experiments, spatial variability can cause "noisy" data. This underlying spatial variability, combined with small differences among treatments, creates a perfect storm for low-powered experiments that are unlikely to detect significant treatment effects, even if they are present.
 
 ### Solution
-Using the example of the randomized complete block design (RCBD), yield clusters are created using historical yield data and blocks are placed inside of these homogenous zones. SEE XXX FOR CONCEPTUAL INTRODUCTION.
+Using the example of the randomized complete block design (RCBD), yield clusters are created using historical yield data and blocks are placed inside of these homogeneous zones. See the [conceptual introduction](https://rpubs.com/smuelle/plotdesignr-introduction) for more details.
 
 ### Current Functionality
 
+The following is a brief example of the plotdesignr workflow and functionality. More detailed documentation and examples will be provided in the future in a separate document.
+
 #### 1. Load multiple years of yield data and prepare for clustering
-The figure below represents three years of corn yield data for a field in 2014, 2016, and 2018. The point yield observations are aggregated into a common grid of hexagonal polygons to enable comparison across years.
+Three years of corn yield data for a field in 2014, 2016, and 2018 are loaded. The point yield observations are aggregated into a common grid of hexagonal polygons to enable comparison across years.
 
 ```{r create-cluster-df, message=FALSE, results='hide'}
 input_config <- read_yaml('./example_workflow_config.yml')
 cluster_df <- make_cluster_data(config = input_config, plot = TRUE)
 ```
 
-#### 2. Choose clustering parameters based on several critera
+#### 2. Choose clustering parameters based on several criteria
 The three years of yield data are clustered using both the yield values and the distance between yield polygons with help from the [`ClustGeo`](https://arxiv.org/pdf/1707.03897.pdf) package. The combined weighting of yield similarity and geographic continuity allows for creating clusters large enough to fit a block of the experiment inside. 
 
 ```{r explore-mixing, eval=FALSE}
@@ -40,7 +42,7 @@ explore_best_mix(processed_data = cluster_df, cluster_number = 3, range = seq(0,
 knitr::include_graphics('./example_workflow_plots/mixing_parameter_map_3_clusters.png')
 ```
 
-For this example, three clusters and a mixing parameter of 0.1 is selected (critera for choosing cluster number not shown). Several critera as well as knowledge about the field must be considered in order to create meaningful clusters.
+For this example, three clusters and a mixing parameter of 0.1 is selected (criteria for choosing cluster number not shown). Several criteria, as well as knowledge about the field, must be considered to create meaningful clusters.
 ```{r finalize-clusters}
 # finalize cluster number and mixing parameter choice
 clustered <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, mixing_parameter = 0.1)
@@ -49,7 +51,7 @@ clustered <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, 
 <br>
 
 #### 3. Design new experiments 
-One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been choosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogenous yield environments.
+One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the [conceptual introduction](https://rpubs.com/smuelle/plotdesignr-introduction) for more details.
 
 <center>
 
@@ -119,4 +121,4 @@ This demonstration highlights the influence of experimental design on statistica
 * Cleaning underlying input data
 
 <br><br>
-`plotdesignr` is still in development and is available on [GitHub](https://github.com/smmueller/plotdesignr)
+`plotdesignr` is still in development and is available on [GitHub](https://github.com/smmueller/plotdesignr).
