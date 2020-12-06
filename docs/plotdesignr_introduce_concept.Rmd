@@ -11,19 +11,19 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE, collapse = TRUE, comment = "#>"
 ```
 
 <br>
-[`plotdesignr`](https://github.com/smmueller/plotdesignr) is a package currently under development that provides a novel way to design agronomic field experiments focused on maximizing statistical power. Field research is time consuming, resource intensive, and can only be done once per year in many growing regions. Because of these constraints, it is important that every experiment is designed in a way that gives it the greatest chance of producing meaningful results.
+[`plotdesignr`](https://github.com/smmueller/plotdesignr) is a package currently under development that provides a novel way to design agronomic field experiments with a focus on maximizing statistical power. Field research is time consuming, resource intensive, and can only be done once per year in many growing regions. Because of these constraints, it is important that every experiment is designed in a way that gives it the greatest chance of producing meaningful results.
 
 ### Challenge
-In large field experiments, spatial variability can cause "noisy" data. This underlying spatial variability, combined with small differences among treatments, creates a perfect storm for low-powered experiments that are unlikely to detect significant treatment effects, even if they are present.
+In large field experiments, spatial variability can cause "noisy" data. This underlying spatial variability, combined with small differences among treatments, creates an opportunity for low-powered experiments that are unlikely to detect significant treatment effects, even if they are present.
 
 ### Review of Statistical Power
 Power =  1 - $\beta$   
-where $\beta$ represents the probability of committing a Type II error (fail to reject the null hypothesis when it is actually false). Put another way, statistical power represents the probability that a test of significance will detect a treatment effect when it is actually present.  
+where $\beta$ represents the probability of committing a Type II error (failure to reject the null hypothesis when it is actually false). Put another way, statistical power represents the probability that a test of significance will detect a treatment effect when it is actually present.  
 
 Power depends on three things:
 
 1. Effect size - the magnitude of difference between treatments. All else equal, it is easier to detect differences between treatments when the effect size is larger.
-2. Sample size - the number of observations in each sample. All else equal, power increases with sample size because of the inverse relationship between sample number in sampling error.
+2. Sample size - the number of observations in each sample. All else equal, power increases with sample size because of the inverse relationship between sample number and sampling error.
 3. Alpha - the alpha value that will be used in tests of significance. This is typically 0.05.
 
 When designing field experiments, there are often limitations in the ability to change the factors influencing power. Alpha is likely dictated by previous literature and accepted convention and sample size might be limited by space, financial resources, and time. It is possible to create large effect size by choosing starkly contrasting treatments, but this may not provide useful insights or meet research goals.
@@ -32,7 +32,7 @@ Another idea to consider is altering the physical design of an experiment. Here,
 
 ### Review of ANOVA and Linear Mixed Models
 
-Experiments conducted with a RCBD will likely be tested using linear mixed models. Mixed models are used to test the fixed effect (here, treatments) separately from the random effects (here, blocks). To understand more fully how RCBD work with linear mixed models a visualize an example is helpful. 
+Experiments conducted with a RCBD will likely be tested using linear mixed models. Mixed models are used to test the fixed effect (here, treatments) separately from the random effects (here, blocks). To understand more fully how RCBD's work with linear mixed models the following visual example is helpful. 
 
 As a quick refresher, ANOVA (analysis of variance) is used to test if group means are significantly different from each other when comparing more than two groups. This is accomplished by evaluating the ratio of *between* group variance to *within* group variance.
 
@@ -63,11 +63,11 @@ Testing for significance in the block effect is usually not of interest and ther
 * Decrease the mean square error (MSE = SSE / (N - K - B- 1))
 * Increase the F value (MSTr / MSE)
 
-Blocking can provide many benefits, but it should be noted that blocks are not free. Because blocks impose a restriction on randomization, they cost degrees of freedom. In order for a block to be statistically "worth it", the decrease in SSE needs to be greater than the loss of degrees of freedom. If the the decrease in degrees of freedom is equal or greater in magnitude to the decrease in SSE, MSE will not be reduced and the F value will not increase. To maximize the utility of blocks, they should be arranged in a way that minimizes within block variation and maximizes between block variation.
+Blocking can provide many benefits, but it should be noted that blocks are not free. Because blocks impose a restriction on randomization, they cost degrees of freedom. In order for a block to be statistically "worth it", the decrease in SSE needs to be greater than the loss of degrees of freedom. If the decrease in degrees of freedom is equal or greater in magnitude to the decrease in SSE, MSE will not be reduced and the F value will not increase. To maximize the utility of blocks, they should be arranged in a way that minimizes within block variation and maximizes between block variation.
 
 ### Influence of block placement in experiment results
 
-In a demonstration experiment, a RCBD with 4 treatments (A, B, C, D) is arranged into 4 blocks. The field used in for the experiment naturally has an East-West gradient where yields increase from East to West. Because of this known spatial variation, the use of blocks is appropriate. The treatments have been assigned different means (10, 5, 2, and 1, respectively), and therefore, if a statistical test fails to reject the null hypothesis it will be a Type II Error (fail to reject the null hypothesis when it is false).
+In a demonstration experiment, a RCBD with 4 treatments (A, B, C, D) is arranged into 4 blocks. The field used for the experiment naturally has an East-West gradient where yields increase from East to West. Because of this known spatial variation, the use of blocks is appropriate. The treatments have been assigned different means (10, 5, 2, and 1, respectively), and therefore, if a statistical test fails to reject the null hypothesis it will be a Type II Error (failure to reject the null hypothesis when it is false).
 
 <details><summary>See code to generate experiment</summary>
 ```{r demo-experiment, message=FALSE}
@@ -235,8 +235,8 @@ summary(ew_result)
 summary(ns_result)
 ```
 
-After reviewing at the summary results of the two models, it is immediately it is clear that the East-West design finds only the intercept (treatA) to be significantly different from the other three treatments while all treatments are different in the North-South design. Looking more closely, notice that the `Estimates` are the same between the two models, as expected, because the treatment means were not impacted by experimental design. The information under `Random effects` reveals what is going on. The variance term represents the SSB from the RCBD ANOVA table presented previously. In the East-West design, the variance is zero, meaning block explained none of the error and therefore all of the error remained in the `Residual` term (SSE in the ANOVA table). In contrast, in the North-South design nearly all of the total error being explained by the block, thereby greatly reducing the MSE and resulting in significant differences. This is an extreme example, but it illustrates the point that block placement has a lot of influence on the results of a linear mixed model.
+After reviewing the summary results of the two models, it is clear that the East-West design finds only the intercept (treatA) to be significantly different from the other three treatments while all treatments are different in the North-South design. Looking more closely, notice that the `Estimates` are the same between the two models, as expected, because the treatment means were not impacted by experimental design. The information under `Random effects` reveals the cause for the differing results. The variance term represents the SSB from the RCBD ANOVA table presented previously. In the East-West design, the variance is zero, meaning block explained none of the error, and therefore, all of the error remained in the `Residual` term (SSE in the ANOVA table). In contrast, in the North-South design nearly all of the total error is explained by the block, thereby greatly reducing the MSE and resulting in significant differences. This is an extreme example, but it illustrates the point that block placement has a lot of influence on the results of a linear mixed model.
 
 It should also be acknowledged that the degrees of freedom are different between the two models. Without going into detail, remember that in mixed models degrees of freedom are approximated and the default method used by `lmerTest` is the Satterthwaite approximation. This approximation accounts for the change in degrees of freedom between models.
 
-This example shows that the physical design of an experiment can greatly impact the ability to detect significant differences. More attention must be given to experimental design in order to maximize the power of agronomic experiments. `plotdesignr` provides a novel and powerful way to test various designs prior to conducting field experiments. For more details on the functionality of this package, please see the [overview](https://rpubs.com/smuelle/plotdesignr-demo).
+This example shows that the physical design of an experiment can greatly impact the ability to detect significant differences. More attention must be given to experimental design in order to maximize the power of agronomic experiments. `plotdesignr` provides a novel and powerful way to test various designs prior to conducting field experiments. For more details on the functionality of this package, please see the [overview](https://smmueller.github.io/plotdesignr/index.html).
