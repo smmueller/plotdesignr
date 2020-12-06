@@ -13,8 +13,18 @@ Imports:
     alphahull,
     igraph,
     maps,
-    sp
+    sp,
+    ClustGeo,
+    data.table,
+    RColorBrewer
 Depends:
-  dplyr,
-  sf
+    dplyr,
+    sf,
+    ggplot2,
+    factoextra,
+    yaml,
+    pryr,
+    R (>= 2.10)
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat

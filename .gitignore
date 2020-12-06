@@ -2,3 +2,20 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
+
+# results and testing files
+*.png
+*.csv
+*.rds
+*.pdf
+
+# shape files
+*.dbf
+*.prj
+*.shp
+*.shx
+
+# documentation subdirectories
+documentation/**/
+*.html
