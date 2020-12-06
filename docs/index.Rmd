@@ -18,7 +18,7 @@ devtools::load_all()
 In large field experiments, spatial variability can cause "noisy" data. This underlying spatial variability, combined with small differences among treatments, creates an opportunity for low-powered experiments that are unlikely to detect significant treatment effects, even if they are present.
 
 ### Solution
-Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the [conceptual introduction](https://rpubs.com/smuelle/plotdesignr-introduction) for more details.
+Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the [conceptual introduction](https://smmueller.github.io/plotdesignr/plotdesignr_introduce_concept.html) tab for more details.
 
 ### Current Functionality
 
@@ -51,7 +51,7 @@ clustered <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, 
 <br>
 
 #### 3. Design new experiments 
-One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the [conceptual introduction](https://rpubs.com/smuelle/plotdesignr-introduction) for more details.
+One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the [conceptual introduction](https://smmueller.github.io/plotdesignr/plotdesignr_introduce_concept.html) tab for more details.
 
 <center>
 

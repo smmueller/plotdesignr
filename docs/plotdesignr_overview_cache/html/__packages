@@ -1,9 +1,0 @@
-base
-dplyr
-sf
-ggplot2
-factoextra
-yaml
-pryr
-testthat
-plotdesignr

@@ -302,7 +302,7 @@ $(document).ready(function () {
 </div>
 <div id="solution" class="section level3">
 <h3>Solution</h3>
-<p>Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the <a href="https://rpubs.com/smuelle/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
+<p>Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the <a href="https://smmueller.github.io/plotdesignr/plotdesignr_introduce_concept.html">conceptual introduction</a> tab for more details.</p>
 </div>
 <div id="current-functionality" class="section level3">
 <h3>Current Functionality</h3>
@@ -312,7 +312,7 @@ $(document).ready(function () {
 <p>Three years of corn yield data for a field in 2014, 2016, and 2018 are loaded. The point yield observations are aggregated into a common grid of hexagonal polygons to enable comparison across years.</p>
 <pre class="r"><code>input_config &lt;- read_yaml(&#39;./example_workflow_config.yml&#39;)
 cluster_df &lt;- make_cluster_data(config = input_config, plot = TRUE)</code></pre>
-<p><img src="plotdesignr_overview_files/figure-html/create-cluster-df-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/create-cluster-df-1.png" width="672" /></p>
 </div>
 <div id="choose-clustering-parameters-based-on-several-criteria" class="section level4">
 <h4>2. Choose clustering parameters based on several criteria</h4>
@@ -326,7 +326,7 @@ clustered &lt;- finalize_clusters(processed_data = cluster_df, cluster_number = 
 </div>
 <div id="design-new-experiments" class="section level4">
 <h4>3. Design new experiments</h4>
-<p>One of the most powerful features of <code>plotdesignr</code> is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the <a href="https://rpubs.com/smuelle/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
+<p>One of the most powerful features of <code>plotdesignr</code> is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the <a href="https://smmueller.github.io/plotdesignr/plotdesignr_introduce_concept.html">conceptual introduction</a> tab for more details.</p>
 <center>
 <p><img src="saved_experiments/out.gif" style="width:50.0%" /></p>
 </center>
@@ -348,7 +348,7 @@ Right: traditional_square, traditional experiment with blocks in a 2x2 arrangeme
 <h4>4. Test power of experimental designs</h4>
 <p>The alternative designs are evaluated for statistical power at various effect sizes using the historical yield data and the <a href="https://besjournals.onlinelibrary.wiley.com/doi/epdf/10.1111/2041-210X.12504"><code>simr</code></a> package. The results below show that, on average, the design <code>disconnected_01</code> has greater statistical power for the same effect size while <code>disconnected_04</code> and <code>traditional_square</code> have the lowest power. This is made most clear in 2014 and 2018. <strong>The interpretation is that for the same level of effect size between treatments, statistical tests are more likely to detect significant differences, when they are present, using the design <code>disconnected_01</code> compared to <code>traditional_square</code>.</strong></p>
 <p><br></p>
-<p><img src="plotdesignr_overview_files/figure-html/power-plots-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/power-plots-1.png" width="672" /></p>
 </div>
 </div>
 <div id="future-work" class="section level3">
