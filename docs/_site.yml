@@ -9,4 +9,6 @@ navbar:
     #   href: basic_workflow.html
 output_dir: "."
 output:
-  html_document
+  html_document:
+      theme: yeti
+      highlight: textmate
