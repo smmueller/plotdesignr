@@ -4,7 +4,7 @@ navbar:
   title: "Overview"
   left:
     - text: "Concept Introduction"
-      href: plotdesignr/plotdesignr_introduce_concept.html
+      href: plotdesignr_introduce_concept.html
     # - text: "Basic Workflow"
     #   href: basic_workflow.html
 output_dir: "."
