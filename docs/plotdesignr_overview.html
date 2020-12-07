@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -15,6 +14,7 @@
 
 <title>plotdesignr: Design Agronomic Field Experiments with more Power</title>
 
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -24,6 +24,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -233,6 +244,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -290,7 +302,7 @@ $(document).ready(function () {
 <h1 class="title toc-ignore">plotdesignr: Design Agronomic Field Experiments with more Power</h1>
 <h3 class="subtitle">Overview of package functionality</h3>
 <h4 class="author">Sarah Mueller</h4>
-<h4 class="date">Last updated: December 06, 2020</h4>
+<h4 class="date">Last updated: December 07, 2020</h4>
 
 </div>
 
@@ -302,7 +314,7 @@ $(document).ready(function () {
 </div>
 <div id="solution" class="section level3">
 <h3>Solution</h3>
-<p>Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the <a href="https://rpubs.com/smuelle/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
+<p>Using historical yield data, clustering is used to detect homogeneous areas of the field in which each block of an experiment can be placed. See the <a href="https://rpubs.com/smmueller/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
 </div>
 <div id="current-functionality" class="section level3">
 <h3>Current Functionality</h3>
@@ -326,7 +338,7 @@ clustered &lt;- finalize_clusters(processed_data = cluster_df, cluster_number = 
 </div>
 <div id="design-new-experiments" class="section level4">
 <h4>3. Design new experiments</h4>
-<p>One of the most powerful features of <code>plotdesignr</code> is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the <a href="https://rpubs.com/smuelle/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
+<p>One of the most powerful features of <code>plotdesignr</code> is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the <a href="https://rpubs.com/smmueller/plotdesignr-introduction">conceptual introduction</a> for more details.</p>
 <center>
 <p><img src="saved_experiments/out.gif" style="width:50.0%" /></p>
 </center>
@@ -372,7 +384,7 @@ Right: traditional_square, traditional experiment with blocks in a 2x2 arrangeme
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

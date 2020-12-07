@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -15,6 +14,7 @@
 
 <title>plotdesignr: Design Agronomic Field Experiments with more Power</title>
 
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -24,6 +24,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -233,6 +244,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -290,7 +302,7 @@ $(document).ready(function () {
 <h1 class="title toc-ignore">plotdesignr: Design Agronomic Field Experiments with more Power</h1>
 <h3 class="subtitle">Conceptual Introduction</h3>
 <h4 class="author">Sarah Mueller</h4>
-<h4 class="date">Last updated: December 06, 2020</h4>
+<h4 class="date">Last updated: December 07, 2020</h4>
 
 </div>
 
@@ -318,7 +330,7 @@ where <span class="math inline">\(\beta\)</span> represents the probability of c
 <p>Experiments conducted with a RCBD will likely be tested using linear mixed models. Mixed models are used to test the fixed effect (here, treatments) separately from the random effects (here, blocks). To understand more fully how RCBD’s work with linear mixed models the following visual example is helpful.</p>
 <p>As a quick refresher, ANOVA (analysis of variance) is used to test if group means are significantly different from each other when comparing more than two groups. This is accomplished by evaluating the ratio of <em>between</em> group variance to <em>within</em> group variance.</p>
 <div class="figure" style="text-align: center">
-<img src="images/anova.jpg" alt="Graphic representation of ANOVA. Image credit: [Liguori and Moreira](https://doi.org/10.21470/1678-9741-2018-0378)" width="1350" />
+<img src="./images/anova.jpg" alt="Graphic representation of ANOVA. Image credit: [Liguori and Moreira](https://doi.org/10.21470/1678-9741-2018-0378)"  />
 <p class="caption">
 Graphic representation of ANOVA. Image credit: <a href="https://doi.org/10.21470/1678-9741-2018-0378">Liguori and Moreira</a>
 </p>
@@ -548,7 +560,7 @@ pre {
 #&gt; treatD -0.012  0.500  0.500</code></pre>
 <p>After reviewing the summary results of the two models, it is clear that the East-West design finds only the intercept (treatA) to be significantly different from the other three treatments while all treatments are different in the North-South design. Looking more closely, notice that the <code>Estimates</code> are the same between the two models, as expected, because the treatment means were not impacted by experimental design. The information under <code>Random effects</code> reveals the cause for the differing results. The variance term represents the SSB from the RCBD ANOVA table presented previously. In the East-West design, the variance is zero, meaning block explained none of the error, and therefore, all of the error remained in the <code>Residual</code> term (SSE in the ANOVA table). In contrast, in the North-South design nearly all of the total error is explained by the block, thereby greatly reducing the MSE and resulting in significant differences. This is an extreme example, but it illustrates the point that block placement has a lot of influence on the results of a linear mixed model.</p>
 <p>It should also be acknowledged that the degrees of freedom are different between the two models. Without going into detail, remember that in mixed models degrees of freedom are approximated and the default method used by <code>lmerTest</code> is the Satterthwaite approximation. This approximation accounts for the change in degrees of freedom between models.</p>
-<p>This example shows that the physical design of an experiment can greatly impact the ability to detect significant differences. More attention must be given to experimental design in order to maximize the power of agronomic experiments. <code>plotdesignr</code> provides a novel and powerful way to test various designs prior to conducting field experiments. For more details on the functionality of this package, please see the <a href="https://smmueller.github.io/plotdesignr/index.html">overview</a>.</p>
+<p>This example shows that the physical design of an experiment can greatly impact the ability to detect significant differences. More attention must be given to experimental design in order to maximize the power of agronomic experiments. <code>plotdesignr</code> provides a novel and powerful way to test various designs prior to conducting field experiments. For more details on the functionality of this package, please see the <a href="https://rpubs.com/smmueller/plotdesignr-demo">overview</a>.</p>
 </div>
 
 
@@ -560,7 +572,7 @@ pre {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
