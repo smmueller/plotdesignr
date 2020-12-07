@@ -41,7 +41,7 @@ input_config <- read_yaml('docs/example_workflow_config.yml')
 cluster_df <- make_cluster_data(config = input_config, plot = TRUE)
 ```
 
-<img src="docs/plotdesignr_overview_files/figure-html/create-cluster-df-1.PNG" width="75%" style="display: block; margin: auto;" />
+<img src="docs/plotdesignr_overview_files/figure-html/create-cluster-df-1.png" width="75%" style="display: block; margin: auto;" />
 
 #### 2. Choose clustering parameters based on several criteria
 
@@ -55,7 +55,7 @@ creating clusters large enough to fit a block of the experiment inside.
 explore_best_mix(processed_data = cluster_df, cluster_number = 3, range = seq(0, 0.5, 0.1), plot = TRUE, output_path = input_config$output_path)
 ```
 
-<img src="docs/example_workflow_plots/mixing_parameter_map_3_clusters.PNG" width="75%" style="display: block; margin: auto;" />
+<img src="docs/example_workflow_plots/mixing_parameter_map_3_clusters.png" width="75%" style="display: block; margin: auto;" />
 
 For this example, three clusters and a mixing parameter of 0.1 is
 selected (criteria for choosing cluster number not shown). Several
@@ -93,9 +93,9 @@ Design names (used in the final figure) from right to left:
 `disconnected_01`, `disconnected_04`, `traditional_square`, and
 `traditional_long`.
 
-<img src="docs/saved_experiments/disconnected_01.PNG" width="39%" /><img src="docs/saved_experiments/disconnected_04.PNG" width="39%" />
+<img src="docs/saved_experiments/disconnected_01.png" width="39%" /><img src="docs/saved_experiments/disconnected_04.png" width="39%" />
 
-<img src="docs/saved_experiments/traditional_square.PNG" width="39%" /><img src="docs/saved_experiments/traditional_long.PNG" width="39%" />
+<img src="docs/saved_experiments/traditional_square.png" width="39%" /><img src="docs/saved_experiments/traditional_long.png" width="39%" />
 
 #### 4. Test power of experimental designs
 
@@ -113,7 +113,7 @@ present, using the design `disconnected_01` compared to
 
 <br>
 
-<img src="docs/plotdesignr_overview_files/figure-html/power-plots-1.PNG" width="75%" />
+<img src="docs/plotdesignr_overview_files/figure-html/power-plots-1.png" width="75%" />
 
 ### Future work
 
