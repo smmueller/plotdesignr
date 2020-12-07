@@ -45,7 +45,7 @@ cluster_df <- make_cluster_data(config = input_config, plot = TRUE)
 ```
 
 ```{r show-cluster-inputs, echo=FALSE, fig.align='center'}
-knitr::include_graphics('create-cluster-df-1.png')
+knitr::include_graphics('docs/plotdesignr_overview_files/figure-html/create-cluster-df-1.png')
 ```
 
 
@@ -92,7 +92,7 @@ The alternative designs are evaluated for statistical power at various effect si
 
 <br>
 
-```{r power-plots, echo=FALSE}
+```{r power-plots, echo=FALSE, fig.align='center'}
 knitr::include_graphics('docs/plotdesignr_overview_files/figure-html/power-plots-1.png')
 ```
 

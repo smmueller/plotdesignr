@@ -41,7 +41,7 @@ input_config <- read_yaml('docs/example_workflow_config.yml')
 cluster_df <- make_cluster_data(config = input_config, plot = TRUE)
 ```
 
-<img src="create-cluster-df-1.png" width="75%" style="display: block; margin: auto;" />
+<img src="docs/plotdesignr_overview_files/figure-html/create-cluster-df-1.png" width="75%" style="display: block; margin: auto;" />
 
 #### 2. Choose clustering parameters based on several criteria
 
@@ -113,7 +113,7 @@ present, using the design `disconnected_01` compared to
 
 <br>
 
-<img src="docs/plotdesignr_overview_files/figure-html/power-plots-1.png" width="75%" />
+<img src="docs/plotdesignr_overview_files/figure-html/power-plots-1.png" width="75%" style="display: block; margin: auto;" />
 
 ### Future work
 
