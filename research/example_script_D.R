@@ -1,14 +1,8 @@
 devtools::load_all()
 
-ex_config <- read_yaml('~/Repositories/plotdesignr/documentation/example_workflow_config.yml')
-
-# define arguments
-# Path <- '/Users/Sarah/Google Drive/Martha - Yield Data/Field D/'
-# Files <- paste0(c('D Yield 14', 'D Yield 16', 'D Yield 18 All'), '.shp')
-# File_ids <- c('2014', '2016', '2018')
-# # see which should be the grid
-# intro <- get_all_files(Path, Files, File_ids)
-# Var_of_interest <- c('Yld_Vol_Dr', 'Yld_Vol_Dr', 'Yld_V_D')
+ex_config <- read_yaml('~/Repositories/plotdesignr/docs/example_workflow_config.yml')
+ex_config$path <- 'docs/example_data/'
+ex_config$output_path <- 'docs/example_workflow_plots/'
 
 par(mfrow = c(2, 2))
 for(i in seq_along(intro)){
@@ -71,10 +65,10 @@ traditional_long <- make_experiment(experiment_type = 'connected',
                                   rotation_angle = NULL, plot_name = 'traditional_long',
                                   block_rows = 4, block_cols = 1)
 
-# saveRDS(disconnected_01, 'documentation/saved_experiments/disconnected_01.rds')
-# saveRDS(disconnected_04, 'documentation/saved_experiments/disconnected_04.rds')
-# saveRDS(traditional_square, 'documentation/saved_experiments/traditional_square.rds')
-# saveRDS(traditional_long, 'documentation/saved_experiments/traditional_long.rds')
+# saveRDS(disconnected_01, 'docs/saved_experiments/disconnected_01.rds')
+# saveRDS(disconnected_04, 'docs/saved_experiments/disconnected_04.rds')
+# saveRDS(traditional_square, 'docs/saved_experiments/traditional_square.rds')
+# saveRDS(traditional_long, 'docs/saved_experiments/traditional_long.rds')
 ################################################################################
 # 4. Run simulations -----------------------------------------------------------
 ################################################################################
@@ -145,7 +139,7 @@ stopCluster(cl)
 
 # arrange data for plotting
 power_df <- data.table::rbindlist(sim_list, idcol = 'source')
-# saveRDS(power_df, 'documentation/saved_experiments/power_df.rds')
+# saveRDS(power_df, 'docs/saved_experiments/power_df.rds')
 power_df_long <- data.table::melt(power_df, id.vars = 'source', variable.name = 'effect_size', value.name = 'power')
 power_df_long[, effect_size := gsub('X', '', effect_size)]
 
