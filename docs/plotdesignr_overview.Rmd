@@ -22,7 +22,7 @@ Using historical yield data, clustering is used to detect homogeneous areas of t
 
 ### Current Functionality
 
-The following is a brief example of the `plotdesignr` workflow and functionality. More detailed documentation and examples will be provided in the future in a separate document.
+The following is a brief example of the `plotdesignr` workflow and functionality. More detailed documentation, including example data, can be found in the [detailed example](https://rpubs.com/smmueller/plotdesignr-detailed-example).
 
 #### 1. Load multiple years of yield data and prepare for clustering
 Three years of corn yield data for a field in 2014, 2016, and 2018 are loaded. The point yield observations are aggregated into a common grid of hexagonal polygons to enable comparison across years.
