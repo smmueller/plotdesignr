@@ -3,9 +3,9 @@
 ###################################################
 
 # Common path among inputs. All inputs do not have to be in the same directory
-path: '/Users/Sarah/Google Drive/Martha - Yield Data/Field D/'
+path: './example_data/'
 # Remaining path to each input file.
-files: ['D Yield 14.shp', 'D Yield 16.shp', 'D Yield 18 All.shp']
+files: ['example field 2014.shp', 'example field 2016.shp', 'example field 2018.shp']
 # names to give each file
 file_ids: ['2014', '2016', '2018']
 # which field should be used as the border for all fields

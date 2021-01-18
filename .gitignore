@@ -19,3 +19,6 @@
 # documentation subdirectories
 documentation/**/
 docs/**/
+
+# specific files
+research/*

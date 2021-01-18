@@ -22,7 +22,7 @@ Using historical yield data, clustering is used to detect homogeneous areas of t
 
 ### Current Functionality
 
-The following is a brief example of the `plotdesignr` workflow and functionality. More detailed documentation and examples will be provided in the future in a separate document.
+The following is a brief example of the `plotdesignr` workflow and functionality. More detailed documentation, including example data, can be found in the [detailed example](https://rpubs.com/smmueller/plotdesignr-detailed-example).
 
 #### 1. Load multiple years of yield data and prepare for clustering
 Three years of corn yield data for a field in 2014, 2016, and 2018 are loaded. The point yield observations are aggregated into a common grid of hexagonal polygons to enable comparison across years.
@@ -33,7 +33,7 @@ cluster_df <- make_cluster_data(config = input_config, plot = TRUE)
 ```
 
 #### 2. Choose clustering parameters based on several criteria
-The three years of yield data are clustered using both the yield values and the distance between yield polygons with help from the [`ClustGeo`](https://arxiv.org/pdf/1707.03897.pdf) package. The combined weighting of yield similarity and geographic continuity allows for creating clusters large enough to fit a block of the experiment inside. 
+The three years of yield data are clustered using both the yield values and the distance between yield polygons with help from the [`ClustGeo`](https://arxiv.org/pdf/1707.03897.pdf) package. The combined weighting of yield similarity and geographic continuity allows for creating clusters large enough to fit a block of the experiment inside. The following plot shows a range of mixing parameters from 0 to 0.5. As the mixing parameter increases, the relative importance of geographic similarity also increases.
 
 ```{r explore-mixing, eval=FALSE}
 explore_best_mix(processed_data = cluster_df, cluster_number = 3, range = seq(0, 0.5, 0.1), plot = TRUE, output_path = input_config$output_path)
@@ -42,7 +42,7 @@ explore_best_mix(processed_data = cluster_df, cluster_number = 3, range = seq(0,
 knitr::include_graphics('./example_workflow_plots/mixing_parameter_map_3_clusters.png')
 ```
 
-For this example, three clusters and a mixing parameter of 0.1 is selected (criteria for choosing cluster number not shown). Several criteria, as well as knowledge about the field, must be considered to create meaningful clusters.
+For this example, three clusters were chosen (criteria for choosing cluster number not shown). Several metrics, as well as knowledge about the field, must be considered to choose the appropriate mixing parameter. 
 ```{r finalize-clusters}
 # finalize cluster number and mixing parameter choice
 clustered <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, mixing_parameter = 0.1)
@@ -51,7 +51,7 @@ clustered <- finalize_clusters(processed_data = cluster_df, cluster_number = 3, 
 <br>
 
 #### 3. Design new experiments 
-One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal it to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the [conceptual introduction](https://rpubs.com/smmueller/plotdesignr-introduction) for more details.
+One of the most powerful features of `plotdesignr` is the ability to interactively create and simulate various experimental designs. Once the clusters have been chosen, simply click on the map to design new experiments. The goal is to place experiment blocks inside of areas of the same cluster because those areas represent homogeneous yield environments. See the [conceptual introduction](https://rpubs.com/smmueller/plotdesignr-introduction) for more details.
 
 <center>
 
@@ -66,18 +66,18 @@ traditional_square <- readRDS('./saved_experiments/traditional_square.rds')
 traditional_long <- readRDS('./saved_experiments/traditional_long.rds')
 ```
 
-Experiments may either have disconnected blocks (shown here with three clusters and two different choices of "mixing parameter") or they may be "traditional" experiments with connected blocks in various arrangements.
+Experiments may either have disconnected blocks (shown here with three clusters and two different choices of mixing parameter) or they may be "traditional" experiments with connected blocks in various arrangements.
 
-```{r mix-plots, echo=FALSE, out.width="49%", fig.show='hold', fig.cap='Right: disconnected_01, three clusters with mixing parameter of 0.1. Left: disconnected_04, three clusters with mixing parameter of 0.4'}
+```{r mix-plots, echo=FALSE, out.width="49%", fig.show='hold', fig.cap='Left: disconnected_01, three clusters with mixing parameter of 0.1. Right: disconnected_04, three clusters with mixing parameter of 0.4'}
 knitr::include_graphics(c('./saved_experiments/disconnected_01.png', './saved_experiments/disconnected_04.png'))
 ```
 
-```{r traditional-plots, echo=FALSE, out.width="49%", fig.show='hold', fig.cap='Right: traditional_square, traditional experiment with blocks in a 2x2 arrangement. Left: traditional_long, traditional experiment with blocks in a 4x1 arrangement.'}
+```{r traditional-plots, echo=FALSE, out.width="49%", fig.show='hold', fig.cap='Left: traditional_square, traditional experiment with blocks in a 2x2 arrangement. Right: traditional_long, traditional experiment with blocks in a 4x1 arrangement.'}
 knitr::include_graphics(c('./saved_experiments/traditional_square.png', './saved_experiments/traditional_long.png'))
 ```
 
 #### 4. Test power of experimental designs   
-The alternative designs are evaluated for statistical power at various effect sizes using the historical yield data and the [`simr`](https://besjournals.onlinelibrary.wiley.com/doi/epdf/10.1111/2041-210X.12504) package. The results below show that, on average, the design `disconnected_01` has greater statistical power for the same effect size while `disconnected_04` and `traditional_square` have the lowest power. This is made most clear in 2014 and 2018. **The interpretation is that for the same level of effect size between treatments, statistical tests are more likely to detect significant differences, when they are present, using the design `disconnected_01` compared to `traditional_square`.** 
+The alternative designs are evaluated for statistical power at various effect sizes using the historical yield data and the [`simr`](https://besjournals.onlinelibrary.wiley.com/doi/epdf/10.1111/2041-210X.12504) package. The results below show that, on average, the design `disconnected_01` has greater statistical power for the same effect size while `disconnected_04` and `traditional_square` have the lowest power. This is made most clear in 2014 and 2018. **The interpretation is that for the same level of effect size between treatments, statistical tests are more likely to detect significant differences, when they are present, using the design `disconnected_01` compared to `traditional_square`.** Furthermore, the greater power of `disconnected_01` compared to `disconnected_04` highlights the importance of choosing a mixing parameter that results in meaningful clusters. Giving too much weight to the geographic constraint results in clusters that are geographically continuous but not homogeneous in yield, as demonstrated by `disconnected_04`.
 
 <br>
 ```{r load-power-results, echo=FALSE}
@@ -121,4 +121,4 @@ This demonstration highlights the influence of experimental design on statistica
 * Cleaning underlying input data
 
 <br><br>
-`plotdesignr` is still in development and is available on [GitHub](https://github.com/smmueller/plotdesignr).
+`plotdesignr` is still in development and is available on [GitHub](https://github.com/smmueller/plotdesignr). If link does not open, please try opening in a new browser tab.
