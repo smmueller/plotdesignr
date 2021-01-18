@@ -21,4 +21,4 @@ documentation/**/
 docs/**/
 
 # specific files
-research/move_field.R
+research/*
