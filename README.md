@@ -30,6 +30,9 @@ devtools::install_github("smmueller/plotdesignr")
 
 ## Example workflow
 
+A more detailed workflow can be found
+[here](https://rpubs.com/smmueller/plotdesignr-detailed-example).
+
 #### 1. Load multiple years of yield data and prepare for clustering
 
 Three years of corn yield data for a field in 2014, 2016, and 2018 are
