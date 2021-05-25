@@ -4,9 +4,11 @@
 \alias{get_all_files}
 \title{Read one or more files}
 \usage{
-get_all_files(path, files, file_ids, to_utm = TRUE)
+get_all_files(config, to_utm = TRUE)
 }
 \arguments{
+\item{to_utm}{logical; should crs be converted to UTM? Default it true.}
+
 \item{path}{string; directory where the files are stored}
 
 \item{files}{string; names of files to be opened within the directory given by
@@ -14,8 +16,6 @@ get_all_files(path, files, file_ids, to_utm = TRUE)
 
 \item{file_ids}{string; names to assign to new columns. Must be in the same
 order as \code{files}.}
-
-\item{to_utm}{logical; should crs be converted to UTM? Default it true.}
 }
 \value{
 A named list of sf objects

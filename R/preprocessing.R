@@ -117,7 +117,7 @@ get_field_grid <- function(field, alpha, harvest_width, passes_to_clip, cellsize
   # make a grid for the whole field.
   poly_grid <- st_make_grid(boundary, cellsize = harvest_width * cellsize_scaler, square = FALSE)
 
-  # returns logicial of whether each polygon is inside the buffer.
+  # returns logical of whether each polygon is inside the buffer.
   # only keeps whole polygons (not partial)
   clipped_grid <- st_within(poly_grid, buffer, sparse = FALSE)
 
