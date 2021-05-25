@@ -2,8 +2,9 @@ Package: plotdesignr
 Type: Package
 Title: Design Agronomic Field Experiments with more Power
 Version: 0.1.0
-Author: Sarah Mueller
-Maintainer: muellersarah0703@gmail.com
+Authors@R:
+    person("Sarah", "Mueller", email = "muellersarah0703@gmail.com", role = c("aut", "cre"))
+Maintainer: Sarah Mueller <muellersarah0703@gmail.com>
 Description: Enables testing of the statistical power of future experiments using historical yield data.
 License: GPL-3
 Encoding: UTF-8
@@ -15,7 +16,14 @@ Imports:
     sp,
     ClustGeo,
     data.table,
-    RColorBrewer
+    RColorBrewer,
+    dplyr,
+    factoextra,
+    ggplot2,
+    pryr,
+    sf,
+    NbClust,
+    ggpubr
 Depends:
     dplyr,
     sf,
